@@ -28,11 +28,11 @@ export default function News() {
       <div className="grid grid-cols-3 gap-16 p-12 bg-white">
         {news.map((article, index) => (
           <Link key={index} href={article.url}>
-            <div className="">
+            <div className="cursor-pointer">
               {article.urlToImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  className="rounded-t-lg w-full"
+                  className="rounded-lg w-full hover:opacity-65 "
                   src={article.urlToImage}
                   alt={article.title}
                   width={200}
