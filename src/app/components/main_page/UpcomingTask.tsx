@@ -32,7 +32,7 @@ const fakeTasks = [
 export default function UpcomingTask() {
   return (
     <div className="flex justify-center items-center">
-      <div className="grid grid-cols-2 gap-6 p-8 w-9/12">
+      <div className="grid md:grid-cols-2 gap-6 p-8 w-9/12 ">
         {fakeTasks.map((task, index) => (
           <div
             key={index}
