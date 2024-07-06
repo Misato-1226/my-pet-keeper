@@ -17,6 +17,8 @@ const config: Config = {
       colors: {
         customBlue1: "#A3D3D9", // カスタムカラーを定義
         customBlue2: "#82C0D9",
+        customGrey1: "#D9D9D9",
+        customGrey2: "#F2F2F2",
       },
     },
   },
