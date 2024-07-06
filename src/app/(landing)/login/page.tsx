@@ -2,14 +2,24 @@ import Image from "next/image";
 import Link from "next/link";
 export default function LogIn() {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-customBlue1">
-      <div className="flex flex-1 h-screen justify-center">
-        <div className="relative w-full h-full">
+    <div className="md:flex justify-center items-center min-h-screen bg-customBlue1">
+      <div className="flex flex-1 md:h-screen justify-center">
+        <div className="relative w-full h-full hidden md:block">
           <Image
             src="/landing2.png"
-            alt="Landing Image"
+            alt="My Pets Keeper"
             layout="fill"
             objectFit="cover"
+          />
+        </div>
+        <div className="block p-10 mb-5 md:hidden ">
+          {/*image for smaller than md screen*/}
+          <Image
+            src="/landing_mobile2.png"
+            alt="My Pets Keeper"
+            width={400}
+            height={200}
+            className="w-full h-auto"
           />
         </div>
       </div>
