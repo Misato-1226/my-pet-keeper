@@ -1,36 +1,63 @@
-export default function Register() {
-  return (
-    <div className="flex flex-col items-center">
-      <h1 className="my-24">Register a New Pet</h1>
-      <form>
-        {/* <input type="file" name="image" accept="image/png, image/jpeg" /> */}
+"use client";
 
-        <input
-          type="file"
-          id="file-upload"
-          className="absolute inset-0 opacity-0 cursor-pointer"
-        />
-        <label className="flex flex-col items-center justify-center text-center">
-          <svg
-            className="w-12 h-12 text-gray-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm0 2h12v10H4V5zm7 1a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H8a1 1 0 110-2h3V7a1 1 0 011-1z"
-              clip-rule="evenodd"
+import { useState } from "react";
+import Image from "next/image";
+
+export default function Register() {
+  const [image, setImage] = useState<string | null>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  return (
+    <div>
+      <h1 className="mt-24 text-3xl font-bold text-center">
+        Register a New Pet
+      </h1>
+      <form className="max-w-full p-12 md:mx-52 lg:mx-80">
+        <div className="flex flex-col justify-center items-center mb-10">
+          <label className="cursor-pointer flex flex-col justify-center items-center">
+            <input
+              type="file"
+              onChange={handleImageUpload}
+              id="file-upload"
+              className="opacity-0 w-0"
+              accept="image/*"
             />
-          </svg>
-          <span className="text-gray-500">Upload Image</span>
-        </label>
-        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-24 gap-8">
-          <div>
-            <label className="block text-gray-700 font-bold mb-8 text-xl">
+
+            {image ? (
+              <img
+                src={image}
+                alt="Uploaded Preview"
+                className="h-36 w-36 object-cover border border-slate-300 rounded-full hover:opacity-70"
+              />
+            ) : (
+              <Image
+                alt="upload image"
+                width={150}
+                height={150}
+                src="https://img.icons8.com/?size=100&id=hAyHNAngD4aQ&format=png&color=000000"
+                className="border border-slate-300 rounded-full hover:opacity-60"
+              />
+            )}
+          </label>
+        </div>
+        <div className="flex flex-col justify-center">
+          <div className="w-full mx-auto">
+            <label className="block text-gray-700 font-bold text-xl text-left">
               Pet Type
             </label>
-            <div className="flex gap-x-10">
-              <div className="flex items-center mb-4">
+            <div className="flex gap-x-10 mb-8">
+              <div className="flex items-center">
                 <input id="dog" type="radio" name="petType" className="mr-2" />
                 <label htmlFor="dog" className="text-gray-700">
                   Dog
@@ -44,9 +71,9 @@ export default function Register() {
               </div>
             </div>
           </div>
-          <div>
+          <div className="w-full mx-auto">
             <label
-              className="block text-gray-700 font-bold mb-8 text-xl"
+              className="block text-gray-700 font-bold text-xl text-left"
               htmlFor="name"
             >
               Name
@@ -55,21 +82,21 @@ export default function Register() {
               id="name"
               type="text"
               placeholder="Enter name"
-              className="border border-gray-300 p-2 rounded w-full"
+              className="border border-gray-300 p-2 rounded w-full mb-8"
             />
           </div>
-          <div>
-            <label className="block text-gray-700 font-bold mb-8 text-xl">
+          <div className="w-full mx-auto">
+            <label className="block text-gray-700 font-bold text-xl text-left">
               Gender
             </label>
-            <div className="flex gap-x-10">
-              <div className="flex items-center mb-4">
+            <div className="flex gap-x-10 mb-8">
+              <div className="flex items-center">
                 <input id="male" type="radio" name="gender" className="mr-2" />
                 <label htmlFor="male" className="text-gray-700">
                   Male
                 </label>
               </div>
-              <div className="flex items-center mb-4">
+              <div className="flex items-center">
                 <input
                   id="female"
                   type="radio"
@@ -80,7 +107,7 @@ export default function Register() {
                   Female
                 </label>
               </div>
-              <div className="flex items-center mb-4">
+              <div className="flex items-center">
                 <input
                   id="unknown"
                   type="radio"
@@ -93,9 +120,22 @@ export default function Register() {
               </div>
             </div>
           </div>
-          <div>
+          <div className="w-full mx-auto">
             <label
-              className="block text-gray-700 font-bold mb-8 text-xl"
+              className="block text-gray-700 font-bold text-xl text-left"
+              htmlFor="birthday"
+            >
+              Birthday
+            </label>
+            <input
+              type="date"
+              name="birthday"
+              className="border border-gray-300 p-2 rounded w-full mb-8"
+            />
+          </div>
+          <div className="w-full mx-auto">
+            <label
+              className="block text-gray-700 font-bold text-xl text-left"
               htmlFor="breed"
             >
               Breed
@@ -103,17 +143,17 @@ export default function Register() {
             </label>
             <select
               id="breed"
-              className="border border-gray-300 p-2 rounded w-full"
+              className="border border-gray-300 p-2 rounded w-full mb-8"
             >
               <option value="">Select a breed</option>
               <option value="breed1">Breed 1</option>
               <option value="breed2">Breed 2</option>
             </select>
           </div>
-          <div className="md:col-span-2">
+          <div className="w-full mx-auto text-center">
             <button
               type="submit"
-              className="w-full bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
+              className="bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
             >
               Register
             </button>
