@@ -2,6 +2,7 @@
 
 import { FC, useEffect, useState } from "react";
 import { getWeatherData } from "@/api/weatherApi";
+import Image from "next/image";
 
 interface DailyWeatherProps {
   location: string;
@@ -41,10 +42,28 @@ const DailyWeatherWidget: FC<DailyWeatherProps> = ({ location }) => {
       <h2 className="widget-header text-xl font-bold mb-4">Daily Weather</h2>
       <div className="widget-content flex justify-between">
         {weatherData.days.slice(0, 7).map((day: any, index: number) => (
-          <div key={index} className="weather-item flex flex-col items-center mx-2">
-            <span>{new Date(day.datetimeEpoch * 1000).toLocaleDateString('en-US', { weekday: 'short' })}</span>
-            <img src={`/icons/1st-set-color/${day.icon}.png`} alt={day.icon} className="w-8 h-8" onError={(e) => { e.currentTarget.src = '/fallback-weather-icon.png'; }} />
-            <span>{day.tempmax}° / {day.tempmin}°</span>
+          <div
+            key={index}
+            className="weather-item flex flex-col items-center mx-2"
+          >
+            <span>
+              {new Date(day.datetimeEpoch * 1000).toLocaleDateString("en-US", {
+                weekday: "short",
+              })}
+            </span>
+            <Image
+              src={`/icons/1st-set-color/${day.icon}.png`}
+              alt={day.icon}
+              width={100}
+              height={100}
+              className="w-8 h-8"
+              onError={(e) => {
+                e.currentTarget.src = "/fallback-weather-icon.png";
+              }}
+            />
+            <span>
+              {day.tempmax}° / {day.tempmin}°
+            </span>
           </div>
         ))}
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { getWeatherData } from "@/api/weatherApi";
 
@@ -40,13 +41,32 @@ const HourlyWeatherWidget: FC<HourlyWeatherProps> = ({ location }) => {
     <div className="hourly-weather-widget p-4 bg-blue-500 rounded-lg shadow-md text-white">
       <h2 className="widget-header text-xl font-bold mb-4">Hourly Weather</h2>
       <div className="widget-content flex justify-between">
-        {weatherData.days[0].hours.slice(0, 6).map((hour: any, index: number) => (
-          <div key={index} className="weather-item flex flex-col items-center mx-2">
-            <span>{new Date(hour.datetimeEpoch * 1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
-            <img src={`/icons/1st-set-color/${hour.icon}.png`} alt={hour.icon} className="w-8 h-8" onError={(e) => { e.currentTarget.src = '/fallback-weather-icon.png'; }} />
-            <span>{hour.temp}°</span>
-          </div>
-        ))}
+        {weatherData.days[0].hours
+          .slice(0, 6)
+          .map((hour: any, index: number) => (
+            <div
+              key={index}
+              className="weather-item flex flex-col items-center mx-2"
+            >
+              <span>
+                {new Date(hour.datetimeEpoch * 1000).toLocaleTimeString(
+                  "en-US",
+                  { hour: "numeric", minute: "2-digit" }
+                )}
+              </span>
+              <Image
+                src={`/icons/1st-set-color/${hour.icon}.png`}
+                alt={hour.icon}
+                width={100}
+                height={100}
+                className="w-8 h-8"
+                onError={(e) => {
+                  e.currentTarget.src = "/fallback-weather-icon.png";
+                }}
+              />
+              <span>{hour.temp}°</span>
+            </div>
+          ))}
       </div>
     </div>
   );

@@ -1,14 +1,19 @@
+import PetPreviewBar from "@/app/components/main_page/PetPreviewBar";
 import Header from "../../components/Header";
 import News from "../../components/main_page/News";
 import UpcomingTask from "../../components/main_page/UpcomingTask";
+import Weather from "@/app/components/main_page/Weather";
 
 export default function Home() {
   return (
-    <>
-      <h1>News</h1>
+    <div className="flex flex-col gap-y-24 my-28">
+      <PetPreviewBar />
+
+      <Weather />
+
       <News />
-      <h1>Upcoming Task</h1>
+
       <UpcomingTask />
-    </>
+    </div>
   );
 }
