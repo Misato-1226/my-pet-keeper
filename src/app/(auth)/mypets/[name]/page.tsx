@@ -15,7 +15,7 @@ export default function PetDetail() {
         </Link>
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex items-center gap-32">
+        <div className="md:flex items-center gap-32">
           <Image
             className="mb-3 rounded-full shadow-lg"
             src="/"
@@ -23,7 +23,7 @@ export default function PetDetail() {
             height={200}
             width={200}
           />
-          <h1 className="text-4xl">wanko</h1>
+          <h1 className="text-4xl text-center">wanko</h1>
         </div>
 
         <div className="grid grid-cols-2 gap-4 gap-x-20 p-16 text-xl">
@@ -37,7 +37,7 @@ export default function PetDetail() {
           <div>Beagle</div>
         </div>
 
-        <div className="flex flex-col space-y-8 p-4 w-2/5">
+        <div className="flex flex-col space-y-8 p-4 md:w-2/5">
           <Link
             href="#"
             className=" w-full flex justify-between items-center bg-gray-200 px-6 py-4 rounded-full shadow-lg text-lg text-black hover:bg-gray-300 transition duration-300"

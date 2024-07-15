@@ -47,8 +47,8 @@ export default function Mypets() {
           Register a New Pet
         </Link>
       </div>
-      <h1 className="text-center">My Pets</h1>
-      <div className="md:grid grid-cols-2 justify-center gap-24 p-32 md:p-20 lg:p-52">
+      <h1 className="text-center text-4xl font-bold">My Pets</h1>
+      <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
         {fakePets.map((pet, index) => (
           <PetCard key={index} pet={pet} />
         ))}
