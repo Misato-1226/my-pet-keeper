@@ -21,7 +21,7 @@ const pets = [
 const PetPreviewBar = () => {
   return (
     <div className="lg:px-36">
-      <h2 className="text-2xl font-bold mb-6">My Pets</h2>
+      <h2 className="text-2xl font-bold mb-6 px-12 lg:p-0">My Pets</h2>
       <div className="">
         <div className="flex justify-center items-center bg-white p-4 rounded-lg shadow-md md:px-36">
           {pets.map((pet, index) => (
@@ -32,7 +32,7 @@ const PetPreviewBar = () => {
               <div className="md:w-28 md:h-28 w-16 h-16 flex justify-center items-center rounded-full border-2 border-gray-300 mb-2 text-4xl">
                 {pet.icon}
               </div>
-              <p className="text-sm">{pet.name}</p>
+              <p className="text-sm md:text-lg">{pet.name}</p>
             </div>
           ))}
         </div>
