@@ -139,7 +139,7 @@ export default function Register() {
               htmlFor="breed"
             >
               Breed
-              <span className="font-normal px-2">choose pet type first</span>
+              <span className="font-normal px-2">※choose pet type first</span>
             </label>
             <select
               id="breed"
