@@ -59,13 +59,13 @@ export default function Register() {
             <div className="flex gap-x-10 mb-8">
               <div className="flex items-center">
                 <input id="dog" type="radio" name="petType" className="mr-2" />
-                <label htmlFor="dog" className="text-gray-700">
+                <label htmlFor="dog" className="text-xl text-gray-700">
                   Dog
                 </label>
               </div>
-              <div className="flex items-center mb-4">
+              <div className="flex items-center">
                 <input id="cat" type="radio" name="petType" className="mr-2" />
-                <label htmlFor="cat" className="text-gray-700">
+                <label htmlFor="cat" className="text-xl text-gray-700">
                   Cat
                 </label>
               </div>
@@ -92,7 +92,7 @@ export default function Register() {
             <div className="flex gap-x-10 mb-8">
               <div className="flex items-center">
                 <input id="male" type="radio" name="gender" className="mr-2" />
-                <label htmlFor="male" className="text-gray-700">
+                <label htmlFor="male" className="text-xl text-gray-700">
                   Male
                 </label>
               </div>
@@ -103,7 +103,7 @@ export default function Register() {
                   name="gender"
                   className="mr-2"
                 />
-                <label htmlFor="female" className="text-gray-700">
+                <label htmlFor="female" className="text-xl text-gray-700">
                   Female
                 </label>
               </div>
@@ -114,7 +114,7 @@ export default function Register() {
                   name="gender"
                   className="mr-2"
                 />
-                <label htmlFor="unknown" className="text-gray-700">
+                <label htmlFor="unknown" className="text-xl text-gray-700">
                   Unknown
                 </label>
               </div>
@@ -153,7 +153,7 @@ export default function Register() {
           <div className="w-full mx-auto text-center">
             <button
               type="submit"
-              className="bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
+              className="text-xl bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
             >
               Register
             </button>
