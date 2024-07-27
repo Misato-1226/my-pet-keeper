@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 
-export default function Register() {
+//get pet data from database
+
+export default function Edit() {
   const [image, setImage] = useState<string | null>(null);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -21,7 +22,7 @@ export default function Register() {
   return (
     <div>
       <h1 className="mt-24 text-3xl font-bold text-center">
-        Register a New Pet
+        Edit Pet Information
       </h1>
       <form className="max-w-full p-12 md:mx-52 lg:mx-80">
         <div className="flex flex-col justify-center items-center mb-10">

@@ -24,7 +24,7 @@ export default function Header() {
               />
             </Link>
 
-            <nav className="space-x-6 hidden md:flex">
+            <nav className="text-xl space-x-6 hidden md:flex">
               <Link href="/">Home</Link>
               <Link href="/mypets">My Pets</Link>
               <Link href="/calender">Calender</Link>
