@@ -17,6 +17,67 @@ model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique @db.VarChar(255)
   password String
+  pets      Pet[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Pet {
+  id          Int             @id @default(autoincrement())
+  name        String
+  petType     PetType
+  breed       String?
+  gender      Gender
+  birthday    String
+  image       Bytes?
+  userId      Int
+  owner       User            @relation(fields: [userId], references: [id])
+  weight      Weight[]        @relation("PetWeights")
+  medicalRecords MedicalRecord[]
+  calendarEvents Calendar[]   @relation("PetCalendar")
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Weight {
+  id     Int      @id @default(autoincrement())
+  date   DateTime
+  value  Float
+  petId  Int
+  pet    Pet      @relation("PetWeights", fields: [petId], references: [id]) 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MedicalRecord {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  notes    String
+  vetName String?
+  petId    Int
+  pet      Pet      @relation(fields: [petId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Calendar {
+  id          Int      @id @default(autoincrement())
+  event       String
+  description String?
+  date        DateTime
+  petId       Int?
+  pet         Pet?      @relation("PetCalendar", fields: [petId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum PetType {
+  DOG
+  CAT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
 }

@@ -2,36 +2,108 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+
+const FormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  petType: z.enum(["DOG", "CAT"], {
+    errorMap: () => ({ message: "Pet type is required" }),
+  }),
+  breed: z.string().optional(),
+  gender: z.enum(["MALE", "FEMALE", "UNKNOWN"], {
+    errorMap: () => ({ message: "Gender is required" }),
+  }),
+  birthday: z.string().optional(),
+  image: z.string().optional(), // 修正: ここは string に変更
+});
+
+type FormSchemaType = z.infer<typeof FormSchema>;
 
 export default function Register() {
+  const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
+  const [binaryImage, setBinaryImage] = useState<Uint8Array | null>(null);
+  const [imageType, setImageType] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
           setImage(reader.result);
+
+          const base64String = reader.result.split(",")[1];
+          const binaryString = atob(base64String);
+          const binaryData = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            binaryData[i] = binaryString.charCodeAt(i);
+          }
+          setBinaryImage(binaryData);
+          setImageType(file.type);
+          console.log(`MIME Type: ${file.type}`);
         }
       };
       reader.readAsDataURL(file);
     }
   };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
+  });
+
+  const onSubmit = async (values: FormSchemaType) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("petType", values.petType);
+      formData.append("breed", values.breed || "");
+      formData.append("gender", values.gender);
+      formData.append("birthday", values.birthday || "");
+
+      if (binaryImage && imageType) {
+        // imageType が null でないことを確認
+        formData.append("image", new Blob([binaryImage], { type: imageType }));
+      }
+
+      const response = await axios.post("/api/pet/register-pet", formData);
+
+      if (response.status === 200) {
+        router.push("/auth/mypets");
+      } else {
+        console.log("Registration failed");
+      }
+    } catch (error) {
+      console.error("Registration error", error);
+    }
+  };
+
   return (
     <div>
       <h1 className="mt-24 text-3xl font-bold text-center">
         Register a New Pet
       </h1>
-      <form className="max-w-full p-12 md:mx-52 lg:mx-80">
+      <form
+        className="max-w-full p-12 md:mx-52 lg:mx-80"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="flex flex-col justify-center items-center mb-10">
           <label className="cursor-pointer flex flex-col justify-center items-center">
             <input
               type="file"
-              onChange={handleImageUpload}
               id="file-upload"
               className="opacity-0 w-0"
               accept="image/*"
+              onChange={handleImageUpload}
             />
 
             {image ? (
@@ -58,17 +130,33 @@ export default function Register() {
             </label>
             <div className="flex gap-x-10 mb-8">
               <div className="flex items-center">
-                <input id="dog" type="radio" name="petType" className="mr-2" />
+                <input
+                  id="dog"
+                  type="radio"
+                  value="DOG"
+                  {...register("petType")}
+                  className="mr-2"
+                />
                 <label htmlFor="dog" className="text-xl text-gray-700">
                   Dog
                 </label>
               </div>
+
               <div className="flex items-center">
-                <input id="cat" type="radio" name="petType" className="mr-2" />
+                <input
+                  id="cat"
+                  type="radio"
+                  value="CAT"
+                  {...register("petType")}
+                  className="mr-2"
+                />
                 <label htmlFor="cat" className="text-xl text-gray-700">
                   Cat
                 </label>
               </div>
+              {errors.petType && (
+                <p className="text-red-600 text-sm">{errors.petType.message}</p>
+              )}
             </div>
           </div>
           <div className="w-full mx-auto">
@@ -78,20 +166,31 @@ export default function Register() {
             >
               Name
             </label>
+            {errors.name && (
+              <p className="text-red-600 text-sm">{errors.name.message}</p>
+            )}
             <input
               id="name"
               type="text"
+              {...register("name")}
               placeholder="Enter name"
               className="border border-gray-300 p-2 rounded w-full mb-8"
             />
           </div>
+
           <div className="w-full mx-auto">
             <label className="block text-gray-700 font-bold text-xl text-left">
               Gender
             </label>
             <div className="flex gap-x-10 mb-8">
               <div className="flex items-center">
-                <input id="male" type="radio" name="gender" className="mr-2" />
+                <input
+                  id="male"
+                  type="radio"
+                  value="MALE"
+                  {...register("gender")}
+                  className="mr-2"
+                />
                 <label htmlFor="male" className="text-xl text-gray-700">
                   Male
                 </label>
@@ -100,7 +199,8 @@ export default function Register() {
                 <input
                   id="female"
                   type="radio"
-                  name="gender"
+                  value="FEMALE"
+                  {...register("gender")}
                   className="mr-2"
                 />
                 <label htmlFor="female" className="text-xl text-gray-700">
@@ -111,13 +211,17 @@ export default function Register() {
                 <input
                   id="unknown"
                   type="radio"
-                  name="gender"
+                  value="UNKNOWN"
+                  {...register("gender")}
                   className="mr-2"
                 />
                 <label htmlFor="unknown" className="text-xl text-gray-700">
                   Unknown
                 </label>
               </div>
+              {errors.gender && (
+                <p className="text-red-600 text-sm">{errors.gender.message}</p>
+              )}
             </div>
           </div>
           <div className="w-full mx-auto">
@@ -129,7 +233,7 @@ export default function Register() {
             </label>
             <input
               type="date"
-              name="birthday"
+              {...register("birthday")}
               className="border border-gray-300 p-2 rounded w-full mb-8"
             />
           </div>
@@ -143,6 +247,7 @@ export default function Register() {
             </label>
             <select
               id="breed"
+              {...register("breed")}
               className="border border-gray-300 p-2 rounded w-full mb-8"
             >
               <option value="">Select a breed</option>
