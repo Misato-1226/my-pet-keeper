@@ -13,7 +13,7 @@ const FormSchema = z
     password: z
       .string()
       .min(1, "Password is required")
-      .min(6, "Password must have than 6 characters"),
+      .min(6, "Password must have more than 6 characters"),
     confirmPassword: z.string().min(1, "Password confirmation is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -35,7 +35,7 @@ export default function SignUp() {
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await axios.post("/api/user", {
+      const response = await axios.post("/api/sign-up", {
         email: values.email,
         password: values.password,
       });

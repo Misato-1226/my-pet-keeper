@@ -1,42 +1,35 @@
-import PetCard from "@/app/components/my_pets/pet_card";
-import Link from "next/link";
+"use client";
 
-const fakePets = [
-  {
-    name: "wanko",
-    petType: "dog",
-    breed: "beagle",
-    gender: "female",
-    age: 3,
-    weight: 10,
-  },
-  {
-    name: "wanko",
-    petType: "dog",
-    breed: "beagle",
-    gender: "female",
-    age: 3,
-    weight: 10,
-  },
-  {
-    name: "wanko",
-    petType: "dog",
-    breed: "beagle",
-    gender: "female",
-    age: 3,
-    weight: 10,
-  },
-  {
-    name: "wanko",
-    petType: "dog",
-    breed: "beagle",
-    gender: "female",
-    age: 3,
-    weight: 10,
-  },
-];
+import PetCard from "@/app/components/my_pets/pet_card";
+import PetType from "@/types/PetType";
+import axios from "axios";
+import Link from "next/link";
+import { useContext, useEffect, useState } from "react";
+import { PetsContext } from "@/app/contexts/Pets";
+
+//fetch pets data from server
 
 export default function Mypets() {
+  const Pets = useContext(PetsContext);
+
+  useEffect(() => {
+    async function fetchPets() {
+      try {
+        const response = await axios.get(`/api/pet/get-all-pets`);
+        if (response.status === 200) {
+          const pets = response.data;
+          console.log(pets);
+          Pets?.setPets(pets);
+        } else {
+          console.error("Failed to fetch pets");
+        }
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+    }
+
+    fetchPets();
+  }, []);
   return (
     <>
       <div className="flex justify-end p-8">
@@ -49,7 +42,7 @@ export default function Mypets() {
       </div>
       <h1 className="text-center text-4xl font-bold">My Pets</h1>
       <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
-        {fakePets.map((pet, index) => (
+        {Pets?.Pets.map((pet, index) => (
           <PetCard key={index} pet={pet} />
         ))}
       </div>
