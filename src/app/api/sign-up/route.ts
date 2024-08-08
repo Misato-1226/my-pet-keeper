@@ -3,7 +3,6 @@ import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-//use zod for validation if we have time
 const userSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
   password: z
@@ -17,14 +16,14 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { email, password } = userSchema.parse(body);
 
-    //check if email already exist
+    // Check if email already exists
     const existingEmail = await prisma.user.findUnique({
       where: { email: email },
     });
 
     if (existingEmail) {
       return NextResponse.json(
-        { user: null, message: "User with this email already exist" },
+        { user: null, message: "User with this email already exists" },
         { status: 409 }
       );
     }
@@ -45,8 +44,9 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Registration error:", error); // Detailed error logging
     return NextResponse.json(
-      { message: "Something went wrong" },
+      { message: "Something went wrong", error: error.message },
       { status: 500 }
     );
   }
