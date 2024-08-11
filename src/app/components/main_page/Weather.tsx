@@ -22,7 +22,7 @@ export default function Weather() {
   return (
     <div className="p-12 lg:px-36">
       <h2 className="text-2xl font-bold mb-6">Weather</h2>
-      <div className="weather-widgets 2xl:flex justify-center items-center space-x-4 2xl:mt-6">
+      <div className="weather-widgets 2xl:mt-6">
         {location && (
           <>
             <div className="p-5">

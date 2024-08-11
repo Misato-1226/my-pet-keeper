@@ -1,4 +1,4 @@
-import MedicalRecords from '../app/components/medical_records/medical-records';
+import MedicalRecords from "../app/components/medical_records/MedicalForm";
 
 const MedicalRecordsPage = () => {
   return (
