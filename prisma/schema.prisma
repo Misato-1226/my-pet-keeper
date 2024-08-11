@@ -33,7 +33,7 @@ model Pet {
   userId      Int
   owner       User            @relation(fields: [userId], references: [id])
   weight      Weight[]        @relation("PetWeights")
-  medicalRecords MedicalRecord[]
+  medicalRecords MedicalRecord[]  @relation("PetMedicalRecord")
   calendarEvents Calendar[]   @relation("PetCalendar")
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -51,11 +51,12 @@ model Weight {
 
 model MedicalRecord {
   id       Int      @id @default(autoincrement())
-  date     DateTime
+  date     String
+  title    String
   notes    String
   vetName String?
   petId    Int
-  pet      Pet      @relation(fields: [petId], references: [id])
+  pet      Pet      @relation("PetMedicalRecord", fields: [petId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

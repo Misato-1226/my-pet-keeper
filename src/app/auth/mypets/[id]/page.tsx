@@ -73,16 +73,16 @@ export default function PetDetail() {
 
         <div className="flex flex-col space-y-8 p-4 md:w-2/5">
           <Link
-            href="#"
+            href={`${id}/weight-tracking`}
             className=" w-full flex justify-between items-center bg-gray-200 px-6 py-4 rounded-full shadow-lg text-lg text-black hover:bg-gray-300 transition duration-300"
           >
             Weight Tracking <span>&gt;</span>
           </Link>
           <Link
-            href="#"
+            href={`${id}/medical-record`}
             className="flex justify-between items-center bg-gray-200 px-6 py-4 rounded-full shadow-lg text-lg text-black hover:bg-gray-300 transition duration-300"
           >
-            Vaccination Records <span>&gt;</span>
+            Medical Records <span>&gt;</span>
           </Link>
         </div>
       </div>
