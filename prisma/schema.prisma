@@ -41,8 +41,9 @@ model Pet {
 
 model Weight {
   id     Int      @id @default(autoincrement())
-  date   DateTime
-  value  Float
+  date   String
+  notes  String?
+  weight  Float
   petId  Int
   pet    Pet      @relation("PetWeights", fields: [petId], references: [id]) 
   createdAt DateTime @default(now())
@@ -53,7 +54,7 @@ model MedicalRecord {
   id       Int      @id @default(autoincrement())
   date     String
   title    String
-  notes    String
+  notes    String?
   vetName String?
   petId    Int
   pet      Pet      @relation("PetMedicalRecord", fields: [petId], references: [id])
@@ -63,7 +64,7 @@ model MedicalRecord {
 
 model Calendar {
   id          Int      @id @default(autoincrement())
-  event       String
+  event       Event
   description String?
   date        DateTime
   petId       Int?
@@ -81,4 +82,11 @@ enum Gender {
   MALE
   FEMALE
   UNKNOWN
+}
+
+enum Event {
+  WALKING
+  VETERINARY
+  GROOMING
+  OTHER
 }

@@ -1,7 +1,6 @@
 import MedicalRecordType from "@/types/MedicalRecordType";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,19 +13,19 @@ const FormSchema = z.object({
 
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-const MedicalEditForm = ({ record }: { record: MedicalRecordType }) => {
+interface PropsType {
+  record: MedicalRecordType;
+  onClose: () => void;
+}
+
+const MedicalEditForm = (props: PropsType) => {
+  const { record, onClose } = props;
   useEffect(() => {
     setValue("date", record.date);
     setValue("title", record.title);
     setValue("notes", record.notes);
-  }, []);
-  const { id } = useParams() as { id: string };
-  const [newRecord, setNewRecord] = useState({
-    date: record.date,
-    title: record.title,
-    notes: record.notes,
-    petId: parseInt(id, 10),
-  });
+  }, [record]);
+
   const {
     register,
     handleSubmit,
@@ -109,13 +108,13 @@ const MedicalEditForm = ({ record }: { record: MedicalRecordType }) => {
             hover:bg-green-600
             mt-2
             "
-          //onClick={onClose}
+          onClick={onClose}
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mt-2"
+          className="ml-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mt-2"
         >
           Update Record
         </button>
