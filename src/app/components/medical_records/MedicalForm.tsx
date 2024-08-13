@@ -18,7 +18,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 
 // Component for managing medical records
 const MedicalForm = ({ onClose }: { onClose: MouseEventHandler }) => {
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const [isClose, setIsClose] = useState(false);
   const [records, setRecords] = useState<MedicalRecordType[]>([]);
 
@@ -102,12 +102,6 @@ const MedicalForm = ({ onClose }: { onClose: MouseEventHandler }) => {
         )} */}
 
           <button
-            type="submit"
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mt-2"
-          >
-            Add Record
-          </button>
-          <button
             className="
           px-4
           py-2
@@ -120,6 +114,12 @@ const MedicalForm = ({ onClose }: { onClose: MouseEventHandler }) => {
             onClick={onClose}
           >
             Close
+          </button>
+          <button
+            type="submit"
+            className="ml-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mt-2"
+          >
+            Add Record
           </button>
         </form>
       </div>

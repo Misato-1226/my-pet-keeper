@@ -51,6 +51,7 @@ const MedicalRecords = () => {
 
   const handleClose = () => {
     setIsClick(false);
+    setIsEdit(false);
   };
 
   const handleModalOpen = (recordId: number) => {
@@ -64,9 +65,9 @@ const MedicalRecords = () => {
   };
 
   const handleEditOpen = (record: MedicalRecordType) => {
+    setRecordToEdit(record);
     setIsEdit(true);
     setIsClick(false);
-    setRecordToEdit(record);
   };
 
   return (
@@ -83,7 +84,9 @@ const MedicalRecords = () => {
         </button>
       </div>
       {isClick && <MedicalForm onClose={handleClose} />}
-      {recordToEdit && isEdit && <MedicalEditForm record={recordToEdit} />}
+      {recordToEdit && isEdit && (
+        <MedicalEditForm record={recordToEdit} onClose={handleClose} />
+      )}
       <div className="flex justify-center flex-col">
         {medicalRecords &&
           medicalRecords.map((record) => (
