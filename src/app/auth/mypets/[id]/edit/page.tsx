@@ -29,7 +29,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 export default function Register() {
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
-  const Pets = useContext(PetsContext);
+
   const { id } = useParams() as { id: string };
 
   const {
@@ -41,32 +41,37 @@ export default function Register() {
     resolver: zodResolver(FormSchema),
   });
 
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [pet, setPet] = useState<PetType>();
+
   useEffect(() => {
-    console.log(id);
+    const getPet = async () => {
+      try {
+        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        if (response.status === 200) {
+          console.log(response.data);
+          setPet(response.data);
+        } else {
+          console.log("Failed to get pet");
+        }
+      } catch (error) {
+        console.log("Failed to fetch pet", error);
+      }
+    };
 
-    const foundPet = Pets?.Pets.find((p) => p.id === parseInt(id, 10));
-    console.log(foundPet);
-
-    if (foundPet) {
-      setValue("name", foundPet.name);
-      setValue("petType", foundPet.petType.toUpperCase() as "DOG" | "CAT");
-      setValue("breed", foundPet.breed || "");
+    if (pet) {
+      setValue("name", pet.name);
+      setValue("petType", pet.petType.toUpperCase() as "DOG" | "CAT");
+      setValue("breed", pet.breed || "");
       setValue(
         "gender",
-        foundPet.gender.toUpperCase() as "MALE" | "FEMALE" | "UNKNOWN"
+        pet.gender.toUpperCase() as "MALE" | "FEMALE" | "UNKNOWN"
       );
-      setValue("birthday", foundPet.birthday || "");
-
-      if (foundPet.image && foundPet.image.data) {
-        const imageBlob = new Blob([new Uint8Array(foundPet.image.data)], {
-          type: "image/*",
-        });
-        const reader = new FileReader();
-        reader.onloadend = () => setImage(reader.result as string);
-        reader.readAsDataURL(imageBlob);
-      }
+      setValue("birthday", pet.birthday || "");
     }
-  }, [Pets, id, setValue]);
+
+    getPet();
+  }, [id, setValue]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
