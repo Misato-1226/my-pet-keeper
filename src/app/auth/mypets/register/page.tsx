@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // new code
 import Image from "next/image";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+
+//new code 
+
+interface Breed {
+  name: string;
+  [key: string]: any;
+}
 
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -28,6 +35,56 @@ export default function Register() {
   const [image, setImage] = useState<string | null>(null);
   const [binaryImage, setBinaryImage] = useState<Uint8Array | null>(null);
   const [imageType, setImageType] = useState<string | null>(null);
+
+  // new code
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [petType, setPetType] = useState<"DOG" | "CAT" | "">("");
+
+  useEffect(() => {
+    if (petType === "CAT") {
+      const url = `https://api.thecatapi.com/v1/breeds`;
+      const api_key = "live_Mh2eS2NfWT60T1AANJ4PV4wnwWB8k3kYzwkabksUUeNRBjIMiR93fgnvVP5huhDR";
+
+      fetch(url, {
+        headers: {
+          "x-api-key": api_key,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setBreeds(data.filter((breed: { name: string }) => breed.name)); 
+        })
+        .catch((error) => {
+          console.error("Error fetching cat breeds:", error.message || error);
+        });
+    } else if (petType === "DOG") {
+      const url = `https://api.thedogapi.com/v1/breeds`;
+      const api_key = "live_AHX3qC4g9vCFEJyXX6GzB3vgb1khxUgCmMwnxRbsZeT8UWdPc0qSUFzZWyDlFw8C";
+
+      fetch(url, {
+        headers: {
+          "x-api-key": api_key,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setBreeds(data.filter((breed: { name: string }) => breed.name));
+        })
+        .catch((error) => {
+          console.error("Error fetching dog breeds:", error.message || error);
+        });
+    }
+  }, [petType]); // Este efecto se ejecuta cuando cambia el tipo de mascota
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -136,6 +193,7 @@ export default function Register() {
                   value="DOG"
                   {...register("petType")}
                   className="mr-2"
+                  onClick={() => setPetType("DOG")} // new code
                 />
                 <label htmlFor="dog" className="text-xl text-gray-700">
                   Dog
@@ -149,6 +207,7 @@ export default function Register() {
                   value="CAT"
                   {...register("petType")}
                   className="mr-2"
+                  onClick={() => setPetType("CAT")} // new code
                 />
                 <label htmlFor="cat" className="text-xl text-gray-700">
                   Cat
@@ -251,8 +310,11 @@ export default function Register() {
               className="border border-gray-300 p-2 rounded w-full mb-8"
             >
               <option value="">Select a breed</option>
-              <option value="breed1">Breed 1</option>
-              <option value="breed2">Breed 2</option>
+              {breeds.map((breed, index) => (
+                <option key={index} value={breed.name}>
+                  {breed.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="w-full mx-auto text-center">
