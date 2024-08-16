@@ -26,7 +26,7 @@ export default function PetCard({ pet }: { pet: PetType }) {
         <div className="flex flex-col items-center pt-10">
           {imageSrc ? (
             <Image
-              className="mb-3 rounded-full shadow-lg"
+              className="mb-3 rounded-full shadow-lg w-52 h-52 object-cover"
               src={imageSrc}
               alt={`${pet.name}'s photo`}
               width={200}

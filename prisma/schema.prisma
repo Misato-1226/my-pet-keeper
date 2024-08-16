@@ -18,6 +18,7 @@ model User {
   email   String   @unique @db.VarChar(255)
   password String
   pets      Pet[]
+  calendarEvents Calendar[] 　@relation("PetCalendar")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -66,7 +67,11 @@ model Calendar {
   id          Int      @id @default(autoincrement())
   event       Event
   description String?
-  date        DateTime
+  date        String
+  startTime   String?
+  endTime     String?
+  userId      Int
+  user        User      @relation("PetCalendar",　fields: [userId], references: [id])
   petId       Int?
   pet         Pet?      @relation("PetCalendar", fields: [petId], references: [id])
   createdAt   DateTime @default(now())
