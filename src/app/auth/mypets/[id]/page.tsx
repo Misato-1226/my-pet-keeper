@@ -4,23 +4,36 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { FaRegEdit } from "react-icons/fa";
-import { useEffect, useState, useContext } from "react";
-import { PetsContext } from "@/app/contexts/Pets";
+import { useEffect, useState } from "react";
+
 import PetType from "@/types/PetType";
+import axios from "axios";
 
 //ここでcontextを使うか、データをフェッチしてくるか。
 export default function PetDetail() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [pet, setPet] = useState<PetType>();
-  const Pets = useContext(PetsContext);
   const { id } = useParams() as { id: string };
 
   useEffect(() => {
-    //contextでpetsステイトから同じidのペットを取得。
-    const pet = Pets?.Pets.find((pet) => pet.id === parseInt(id, 10));
-    console.log(pet);
-    setPet(pet);
+    const getPet = async () => {
+      try {
+        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        if (response.status === 200) {
+          console.log(response.data);
+          setPet(response.data);
+        } else {
+          console.log("Failed to get pet");
+        }
+      } catch (error) {
+        console.log("Failed to fetch pet", error);
+      }
+    };
 
+    getPet();
+  }, [id]);
+
+  useEffect(() => {
     if (pet?.image && pet.image.data) {
       const imageBlob = new Blob([new Uint8Array(pet.image.data)], {
         type: "image/*",
@@ -31,7 +44,7 @@ export default function PetDetail() {
       };
       reader.readAsDataURL(imageBlob);
     }
-  }, [Pets, id]);
+  }, [pet?.image]);
 
   return (
     <div className="">

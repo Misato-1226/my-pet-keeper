@@ -8,6 +8,7 @@ export async function GET(
   try {
     // ペットのidからそのペットの診療記録を取得する。
     const petId = parseInt(params.id);
+    console.log("patId: ", petId);
 
     const medicalRecords = await prisma.medicalRecord.findMany({
       where: { petId: petId }, // 修正ポイント
