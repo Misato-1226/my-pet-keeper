@@ -29,7 +29,7 @@ export const getNews = async () => {
   try {
     const response = await axios.get(
       //can't use apikey from .env
-      `https://newsapi.org/v2/everything?q=pets AND dogs&q=pets AND cats&from=${getTwoDaysBefore()}&to=${getToday()}&pageSize=6&apiKey=beb5b2cc41034b718e22d2c71b8a7ad2`
+      `https://newsapi.org/v2/everything?q=pets AND dogs&q=pets AND cats&from=${getTwoDaysBefore()}&to=${getToday()}&pageSize=15&apiKey=beb5b2cc41034b718e22d2c71b8a7ad2`
     );
 
     if (response.status !== 200) {

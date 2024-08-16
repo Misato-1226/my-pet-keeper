@@ -4,32 +4,29 @@ import PetCard from "@/app/components/my_pets/pet_card";
 import PetType from "@/types/PetType";
 import axios from "axios";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import { PetsContext } from "@/app/contexts/Pets";
+import { useEffect, useState } from "react";
 
-//fetch pets data from server
-
+// Fetch pets data from server
 export default function Mypets() {
-  const Pets = useContext(PetsContext);
+  const [pets, setPets] = useState<PetType[]>([]);
 
   useEffect(() => {
-    async function fetchPets() {
+    const getPets = async () => {
       try {
-        const response = await axios.get(`/api/pet/get-all-pets`);
+        const response = await axios.get("/api/pet/get-all-pets");
         if (response.status === 200) {
-          const pets = response.data;
-          console.log(pets);
-          Pets?.setPets(pets);
+          console.log("Get Pets Successfully", response.data);
+          setPets(response.data);
         } else {
-          console.error("Failed to fetch pets");
+          console.error("Failed to get pets");
         }
       } catch (error) {
-        console.error("Error fetching image", error);
+        console.error("Failed to fetch pets", error);
       }
-    }
-
-    fetchPets();
+    };
+    getPets();
   }, []);
+
   return (
     <>
       <div className="flex justify-end p-8">
@@ -41,11 +38,15 @@ export default function Mypets() {
         </Link>
       </div>
       <h1 className="text-center text-4xl font-bold">My Pets</h1>
-      <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
-        {Pets?.Pets.map((pet, index) => (
-          <PetCard key={index} pet={pet} />
-        ))}
-      </div>
+      {pets.length > 0 ? (
+        <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
+          {pets.map((pet) => (
+            <PetCard key={pet.id} pet={pet} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-xl mt-36">No pet registered</p>
+      )}
     </>
   );
 }

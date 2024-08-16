@@ -1,46 +1,68 @@
 "use client";
 
-import { useContext } from "react";
+import { FC, useEffect, useState } from "react";
 import Link from "next/link";
-import { PetsContext } from "@/app/contexts/Pets"; // Ajusta la ruta según tu estructura de proyecto
+import Image from "next/image";
+import PetType from "@/types/PetType";
 
-const PetPreviewBar = () => {
-  const Pets = useContext(PetsContext);
+const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
+  const [imageSrcs, setImageSrcs] = useState<{ [key: string]: string }>({});
 
-  if (!Pets || Pets.Pets.length === 0) {
-    return <p>No pets found.</p>;
-  }
+  useEffect(() => {
+    if (pets.length === 0) return;
+
+    const newImageSrcs: { [key: string]: string } = {};
+
+    pets.forEach((pet) => {
+      if (pet.image && pet.image.data) {
+        const imageBlob = new Blob([new Uint8Array(pet.image.data)], {
+          type: "image/*",
+        });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          newImageSrcs[pet.name] = reader.result as string;
+          setImageSrcs((prevSrcs) => ({ ...prevSrcs, ...newImageSrcs }));
+        };
+        reader.readAsDataURL(imageBlob);
+      }
+    });
+  }, [pets]);
 
   return (
     <div className="lg:px-36">
-      <Link href="/auth/mypets">
-        <h2 className="text-2xl font-bold mb-6 px-12 lg:p-0">My Pets</h2>
-        <div className="">
-          <div className="flex justify-center items-center bg-white p-4 rounded-lg shadow-md md:px-36">
-            {Pets.Pets.slice(0, 4).map((pet) => (
-              <div
-                key={pet.id}
-                className="flex flex-col items-center md:mx-4 mx-2 hover:scale-110 duration-200"
-              >
-                <Link href={`/auth/mypets/${pet.id}`}>
-                  <div className="md:w-28 md:h-28 w-16 h-16 flex justify-center items-center rounded-full border-2 border-gray-300 mb-2 bg-gray-200">
-                    {pet.image ? (
-                      <img
-                        src={`data:image/*;base64,${pet.image}`}
-                        alt={`${pet.name}'s photo`}
-                        className="rounded-full w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>🐾</span> // Placeholder if no image
-                    )}
-                  </div>
-                  <p className="text-sm md:text-lg">{pet.name}</p>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Link>
+      <h2 className="text-2xl font-bold mb-6 px-12 lg:p-0">
+        <Link href="/auth/mypets">My Pets</Link>
+      </h2>
+
+      <div className="flex justify-center items-center bg-white p-4 rounded-lg shadow-md md:px-36">
+        {pets.length > 0 ? (
+          pets.map((pet, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center md:mx-4 mx-2 hover:scale-110 duration-200"
+            >
+              <Link href={`mypets/${pet.id}`}>
+                <div className="flex justify-center items-center">
+                  {imageSrcs[pet.name] ? (
+                    <Image
+                      src={imageSrcs[pet.name]}
+                      alt={pet.name}
+                      width={200} // md:w-28 = 7rem = 112px
+                      height={50} // md:h-28 = 7rem = 112px
+                      className="md:w-32 md:h-32 mb-3 rounded-full shadow-lg w-16 h-16 object-cover"
+                    />
+                  ) : (
+                    <div className="mb-3 rounded-full shadow-lg bg-gray-200 w-[200px] h-[200px]" />
+                  )}
+                </div>
+                <p className="text-sm md:text-lg text-center">{pet.name}</p>
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p className="p-12">No registered pet</p>
+        )}
+      </div>
     </div>
   );
 };

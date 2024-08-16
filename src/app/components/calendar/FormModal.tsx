@@ -63,7 +63,7 @@ const FormModal: React.FC<ModalProps> = ({ onClose }) => {
         className="fixed inset-0 bg-black opacity-50"
         onClick={onClose}
       ></div>
-      <div className="w-1/2 h-1/2 bg-white border-8 border-customBlue2 p-6 rounded-lg z-10">
+      <div className="w-1/2 bg-white border-8 border-customBlue2 p-6 rounded-lg z-10">
         <h2 className="text-2xl mb-4">Add Event</h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -119,16 +119,14 @@ const FormModal: React.FC<ModalProps> = ({ onClose }) => {
             >
               Add
             </button>
+            <button
+              className="text-xl ml-3 bg-customGrey1 text-black py-2 px-4 rounded mt-4 hover:bg-customGrey1/80"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
           </div>
         </form>
-        <div className="px-3 inline-block">
-          <button
-            className="text-xl bg-customGrey1 text-black py-2 px-4 rounded mt-4 hover:bg-customGrey1/80"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-        </div>
       </div>
     </div>
   );

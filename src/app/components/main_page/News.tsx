@@ -26,7 +26,7 @@ export default function News() {
   return (
     <div className="p-12 lg:px-36">
       <h2 className="text-2xl font-bold mb-6">News</h2>
-      <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-16 p-12 bg-white">
+      <div className="grid xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 grid-cols-2    gap-16 p-12 bg-white">
         {news.map((article, index) => (
           <Link key={index} href={article.url}>
             <div className="cursor-pointer">
@@ -42,7 +42,7 @@ export default function News() {
               ) : (
                 <div className="rounded-t-lg w-full h-100 bg-gray-200" />
               )}
-              <h2>{article.title}</h2>
+              <h2 className="sm:text-sm">{article.title}</h2>
             </div>
           </Link>
         ))}

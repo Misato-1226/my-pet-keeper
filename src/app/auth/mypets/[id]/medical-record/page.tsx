@@ -9,18 +9,16 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-//give records as props to component one by one
-
 const MedicalRecords = () => {
   const { id } = useParams() as { id: string };
   const [isClick, setIsClick] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  //store those records into state
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecordType[]>();
   const [activeRecordId, setActiveRecordId] = useState<number | null>(null);
   const [recordToEdit, setRecordToEdit] = useState<MedicalRecordType>();
   const petId = parseInt(id, 10);
+
   useEffect(() => {
     const getMedicalRecord = async () => {
       if (petId) {
@@ -30,10 +28,10 @@ const MedicalRecords = () => {
           );
 
           if (response.status === 200) {
-            console.log("Medical Record Registration success");
+            console.log("Get Medical Records successfully", response.data);
             setMedicalRecords(response.data);
           } else {
-            console.log("Failed to fetch Medical Records");
+            console.log("Failed to get Medical Records");
           }
         } catch (error) {
           console.error("Error fetching Medical Records", error);
@@ -42,7 +40,7 @@ const MedicalRecords = () => {
     };
 
     getMedicalRecord();
-  }, [petId]); // id が変更されたら再度実行する
+  }, [petId]);
 
   const handleClick = () => {
     setIsClick(true);
@@ -83,13 +81,15 @@ const MedicalRecords = () => {
           New Medical Record
         </button>
       </div>
+
       {isClick && <MedicalForm onClose={handleClose} />}
       {recordToEdit && isEdit && (
         <MedicalEditForm record={recordToEdit} onClose={handleClose} />
       )}
-      <div className="flex justify-center flex-col">
-        {medicalRecords &&
-          medicalRecords.map((record) => (
+
+      {medicalRecords && medicalRecords.length > 0 ? (
+        <div className="flex justify-center flex-col">
+          {medicalRecords.map((record) => (
             <div key={record.id}>
               <div
                 className="px-3 md:p-10 lg:px-48 py-6"
@@ -109,7 +109,10 @@ const MedicalRecords = () => {
               )}
             </div>
           ))}
-      </div>
+        </div>
+      ) : (
+        <p className="text-center mt-10">No Medical Records found</p>
+      )}
     </div>
   );
 };
