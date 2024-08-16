@@ -4,13 +4,12 @@ import PetCard from "@/app/components/my_pets/pet_card";
 import PetType from "@/types/PetType";
 import axios from "axios";
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
-import { PetsContext } from "@/app/contexts/Pets";
+import { useEffect, useState } from "react";
 
-//fetch pets data from server
-
+// Fetch pets data from server
 export default function Mypets() {
   const [pets, setPets] = useState<PetType[]>([]);
+
   useEffect(() => {
     const getPets = async () => {
       try {
@@ -19,10 +18,10 @@ export default function Mypets() {
           console.log("Get Pets Successfully", response.data);
           setPets(response.data);
         } else {
-          console.log("Failed to get pets");
+          console.error("Failed to get pets");
         }
       } catch (error) {
-        console.log("Failed to fetching pets");
+        console.error("Failed to fetch pets", error);
       }
     };
     getPets();
@@ -39,11 +38,15 @@ export default function Mypets() {
         </Link>
       </div>
       <h1 className="text-center text-4xl font-bold">My Pets</h1>
-      <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
-        {pets.map((pet, index) => (
-          <PetCard key={index} pet={pet} />
-        ))}
-      </div>
+      {pets.length > 0 ? (
+        <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
+          {pets.map((pet) => (
+            <PetCard key={pet.id} pet={pet} />
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-xl mt-36">No pet registered</p>
+      )}
     </>
   );
 }
