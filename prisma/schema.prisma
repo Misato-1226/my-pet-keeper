@@ -18,6 +18,7 @@ model User {
   email   String   @unique @db.VarChar(255)
   password String
   pets      Pet[]
+  calendarEvents Calendar[] 　@relation("PetCalendar")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -33,7 +34,7 @@ model Pet {
   userId      Int
   owner       User            @relation(fields: [userId], references: [id])
   weight      Weight[]        @relation("PetWeights")
-  medicalRecords MedicalRecord[]
+  medicalRecords MedicalRecord[]  @relation("PetMedicalRecord")
   calendarEvents Calendar[]   @relation("PetCalendar")
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -41,8 +42,9 @@ model Pet {
 
 model Weight {
   id     Int      @id @default(autoincrement())
-  date   DateTime
-  value  Float
+  date   String
+  notes  String?
+  weight  Float
   petId  Int
   pet    Pet      @relation("PetWeights", fields: [petId], references: [id]) 
   createdAt DateTime @default(now())
@@ -51,20 +53,25 @@ model Weight {
 
 model MedicalRecord {
   id       Int      @id @default(autoincrement())
-  date     DateTime
-  notes    String
+  date     String
+  title    String
+  notes    String?
   vetName String?
   petId    Int
-  pet      Pet      @relation(fields: [petId], references: [id])
+  pet      Pet      @relation("PetMedicalRecord", fields: [petId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Calendar {
   id          Int      @id @default(autoincrement())
-  event       String
+  event       Event
   description String?
-  date        DateTime
+  date        String
+  startTime   String?
+  endTime     String?
+  userId      Int
+  user        User      @relation("PetCalendar",　fields: [userId], references: [id])
   petId       Int?
   pet         Pet?      @relation("PetCalendar", fields: [petId], references: [id])
   createdAt   DateTime @default(now())
@@ -80,4 +87,11 @@ enum Gender {
   MALE
   FEMALE
   UNKNOWN
+}
+
+enum Event {
+  WALKING
+  VETERINARY
+  GROOMING
+  OTHER
 }
