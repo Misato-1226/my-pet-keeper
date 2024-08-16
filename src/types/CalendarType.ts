@@ -1,6 +1,6 @@
 export default interface CalendarType {
   id: string;
-  date?: string;
+  date?: string | Date;
   startTime?: string;
   endTime?: string;
   event: string;

@@ -85,7 +85,7 @@ export const EditModal: React.FC<PropsType> = ({ onEdit, modalContent }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div className="fixed inset-0 bg-black opacity-50" onClick={onEdit}></div>
-      <div className="w-1/2 h-1/2 bg-white border-8 border-customBlue2 p-6 rounded-lg z-10">
+      <div className="w-1/2 bg-white border-8 border-customBlue2 p-6 rounded-lg z-10">
         <h2 className="text-2xl mb-4">Add Event</h2>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -141,16 +141,14 @@ export const EditModal: React.FC<PropsType> = ({ onEdit, modalContent }) => {
             >
               Update
             </button>
+            <button
+              className="text-xl ml-3 bg-customGrey1 text-black py-2 px-4 rounded mt-4 hover:bg-customGrey1/80"
+              onClick={onEdit}
+            >
+              Cancel
+            </button>
           </div>
         </form>
-        <div className="px-3 inline-block">
-          <button
-            className="text-xl bg-customGrey1 text-black py-2 px-4 rounded mt-4 hover:bg-customGrey1/80"
-            onClick={onEdit}
-          >
-            Cancel
-          </button>
-        </div>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ export default function Calendar() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [calendarKey, setCalendarKey] = useState(0);
   const [modalContent, setModalContent] = useState<CalendarType>();
   const [events, setEvents] = useState<CalendarType[]>([]);
 
@@ -107,6 +108,7 @@ export default function Calendar() {
     <>
       <div className="p-12">
         <FullCalendar
+          key={calendarKey}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={events}
