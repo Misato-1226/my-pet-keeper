@@ -30,10 +30,10 @@ const MedicalRecords = () => {
           );
 
           if (response.status === 200) {
-            console.log("Medical Record Registration success");
+            console.log("Get Medical Records successfully");
             setMedicalRecords(response.data);
           } else {
-            console.log("Failed to fetch Medical Records");
+            console.log("Failed to get Medical Records");
           }
         } catch (error) {
           console.error("Error fetching Medical Records", error);
