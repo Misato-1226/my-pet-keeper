@@ -1,30 +1,108 @@
 "use client";
-import { useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
-import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction"; // needed for dayClick
-import Modal from "@/app/components/calendar/Modal";
+import type { EventClickArg } from "@fullcalendar/core";
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import FormModal from "@/app/components/calendar/FormModal";
+import EventModal from "@/app/components/calendar/EventModal";
+import CalendarType from "@/types/CalendarType";
+import axios from "axios";
+import { EditModal } from "@/app/components/calendar/EditModal";
 
 export default function Calendar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const events = [
-    {
-      id: "a", // ユニークID
-      start: "2024-07-02T05:20:00", // イベント開始日
-      end: "", // イベント終了日
-      title: "Grooming", // イベントのタイトル
-      description: "", // イベントの詳細
-      backgroundColor: "blue", // 背景色
-      borderColor: "blue", // 枠線色
-      editable: true, // イベント操作の可否
-    },
-    // 省略
-  ];
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [modalContent, setModalContent] = useState<CalendarType>();
+  const [events, setEvents] = useState<CalendarType[]>([]);
 
-  const handleCustomButtonClick = () => {
-    setIsModalOpen(!isModalOpen);
+  useEffect(() => {
+    const getEvent = async () => {
+      try {
+        const response = await axios.get("/api/pet/get-all-events");
+        if (response.status === 200) {
+          console.log("Get All Events Successfully", response);
+          const events = response.data;
+          const transformedEvents = events.map(transformEvent);
+          setEvents(transformedEvents);
+          //setEvents(events);
+        } else {
+          console.log("Failed to Get All Events");
+        }
+      } catch (error) {
+        console.log("Something Went Wrong", error);
+      }
+    };
+
+    const transformEvent = (event: CalendarType) => {
+      return {
+        id: event.id.toString(),
+        start: `${event.date}T${event.startTime}`,
+        end: `${event.date}T${event.endTime}`,
+        title: event.event,
+        description: event.description || "",
+        backgroundColor: "blue", // 必要に応じて色を設定
+        borderColor: "blue", // 必要に応じて色を設定
+        editable: true, // 必要に応じて設定
+      };
+    };
+    getEvent();
+  }, []);
+
+  const handleEditModal = () => {
+    setIsEdit(!isEdit);
+    setIsEventModalOpen(false);
   };
 
+  // const example = [
+  //   {
+  //     id: "a", // ユニークID
+  //     start: "2024-08-10T05:20:00", // イベント開始日
+  //     end: "2024-08-10T08:40:00", // イベント終了日
+  //     title: "Grooming", // イベントのタイトル
+  //     description:
+  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra, nisl vitae efficitur ornare, mauris lectus molestie nisl, in luctus nisl arcu eget urna. Proin finibus magna tincidunt tortor laoreet, vitae efficitur mi tristique. Vestibulum lacinia condimentum pretium. Mauris quis ipsum sed neque blandit mollis commodo placerat ex. Duis rhoncus, mi vel mollis interdum, risus neque tincidunt velit, quis dignissim nisi nisi ut dui.", // イベントの詳細
+  //     backgroundColor: "blue", // 背景色
+  //     borderColor: "blue", // 枠線色
+  //     editable: true, // イベント操作の可否
+  //   },
+  //   // 省略
+  // ];
+
+  const handleCustomButtonClick = () => {
+    setIsFormModalOpen(!isFormModalOpen);
+  };
+
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    //const description = clickInfo.event.extendedProps.description;
+    const { description } = clickInfo.event.extendedProps;
+    const id = clickInfo.event.id;
+    const { title } = clickInfo.event;
+    let startTime: string | undefined;
+    let endTime: string | undefined;
+
+    // `null`チェックを行う
+    if (clickInfo.event._instance) {
+      startTime = clickInfo.event._instance.range.start.toString();
+      endTime = clickInfo.event._instance.range.end.toString();
+    }
+
+    const eventDetail = {
+      id,
+      description,
+      event: title,
+      startTime: startTime,
+      endTime: endTime,
+    };
+
+    setModalContent(eventDetail);
+    setIsEventModalOpen(!isEventModalOpen);
+  };
+
+  const handleEventModalClose = () => {
+    setIsEventModalOpen(false);
+  };
   return (
     <>
       <div className="p-12">
@@ -32,6 +110,8 @@ export default function Calendar() {
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={events}
+          displayEventTime={false}
+          displayEventEnd={false}
           editable={true}
           customButtons={{
             customButton: {
@@ -44,10 +124,21 @@ export default function Calendar() {
             center: "title",
             right: "customButton",
           }}
+          eventClick={handleEventClick}
         />
       </div>
 
-      {isModalOpen && <Modal onClose={handleCustomButtonClick} />}
+      {isFormModalOpen && <FormModal onClose={handleCustomButtonClick} />}
+      {isEventModalOpen && modalContent && (
+        <EventModal
+          onClose={handleEventModalClose}
+          modalContent={modalContent}
+          onEdit={handleEditModal}
+        />
+      )}
+      {isEdit && (
+        <EditModal onEdit={handleEditModal} modalContent={modalContent} />
+      )}
     </>
   );
 }

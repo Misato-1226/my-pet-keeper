@@ -22,7 +22,7 @@ const pets = [
 const PetPreviewBar = () => {
   return (
     <div className="lg:px-36">
-      <Link href="/mypets">
+      <Link href="/auth/mypets">
         <h2 className="text-2xl font-bold mb-6 px-12 lg:p-0">My Pets</h2>
         <div className="">
           <div className="flex justify-center items-center bg-white p-4 rounded-lg shadow-md md:px-36">

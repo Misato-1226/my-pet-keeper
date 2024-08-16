@@ -48,7 +48,7 @@ export default function PetDetail() {
         <div className="md:flex items-center gap-32">
           {imageSrc ? (
             <Image
-              className="mb-3 rounded-full shadow-lg"
+              className="mb-3 rounded-full shadow-lg w-52 h-52 object-cover"
               src={imageSrc}
               alt="Pet"
               width={200}
