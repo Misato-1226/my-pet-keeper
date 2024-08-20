@@ -67,12 +67,12 @@ export default function UpcomingEvent() {
   };
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 px-12 lg:px-36">Upcoming Task</h2>
+      <h2 className="text-2xl font-bold mb-6 px-12 lg:px-36">Upcoming Event</h2>
       <div className="flex justify-center items-center">
-        <div className="grid md:grid-cols-2 gap-6 p-8 w-9/12">
+        <div className="grid md:grid-cols-2 gap-6 sm:p-8 w-9/12">
           {upcomingEvents.map((event, index) => (
             <Link key={index} href="/pet/calendar">
-              <div className="bg-cyan-200 rounded-2xl flex justify-between items-center p-5 hover:scale-95 cursor-pointer duration-500">
+              <div className="bg-stone-300 rounded-2xl flex justify-between items-center p-5 hover:scale-95 cursor-pointer duration-500">
                 <Image
                   src={getIconSrc(event.event)} // デフォルト画像を指定
                   alt="event icon"
@@ -83,10 +83,12 @@ export default function UpcomingEvent() {
                   <h1 className="text-lg font-semibold">{event.event}</h1>
                   <h2>{formatDate(event.date)}</h2>
                 </div>
-                {event.startTime && event.endTime && (
-                  <span>
+                {event.startTime && event.endTime ? (
+                  <span className="sm:">
                     {event.startTime}~{event.endTime}
                   </span>
+                ) : (
+                  <span className="sm:">Time not set</span>
                 )}
               </div>
             </Link>

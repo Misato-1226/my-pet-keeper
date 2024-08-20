@@ -3,14 +3,34 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MdLogout } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
+import axios from "axios";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
+  const [userMail, setUserMail] = useState("");
   const handleMenuOpen = () => {
     setOpenMenu(!openMenu);
   };
+
+  useEffect(() => {
+    const getUserMail = async () => {
+      try {
+        const response = await axios.get("/api/get-user-mail");
+        if (response.status === 200) {
+          console.log(response.data);
+          const { email } = response.data;
+          setUserMail(email);
+        } else {
+          console.log("Failed to get pet");
+        }
+      } catch (error) {
+        console.log("Failed to fetch pet", error);
+      }
+    };
+    getUserMail();
+  }, []);
 
   return (
     <header className="fixed w-full bg-customBlue2 shadow-lg z-50">
@@ -32,20 +52,24 @@ const Header = () => {
               <Link href="/auth/calender">Calender</Link>
             </nav>
           </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              signOut({
-                redirect: true,
-                callbackUrl: `${window.location.origin}/sign-in`,
-              })
-            }
-            className="py-2.5 px-5 me-2 mb-2 text-base font-medium text-gray-900 focus:outline-none bg-white rounded-full border-2 border-gray-300 hover:bg-gray-100  focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 hidden md:block"
-          >
-            Log out
-            <MdLogout className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-5">
+            <p>
+              User: <span className="underline">{userMail}</span>
+            </p>
+            <button
+              type="button"
+              onClick={() =>
+                signOut({
+                  redirect: true,
+                  callbackUrl: `${window.location.origin}/sign-in`,
+                })
+              }
+              className="py-3 px-5 me-2 mb-2 text-base font-medium text-gray-900 focus:outline-none bg-white rounded-full border-2 border-gray-300 hover:bg-gray-100  focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 hidden md:block"
+            >
+              Log out
+              <MdLogout className="h-5 w-5 inline ml-2" />
+            </button>
+          </div>
         </div>
         <div className="md:hidden">
           <button

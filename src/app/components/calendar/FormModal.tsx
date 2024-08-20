@@ -8,6 +8,7 @@ type ModalProps = {
   onClose: (
     event: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>
   ) => void;
+  onFormSubmit: (message: string, formType: string) => void;
 };
 
 const FormSchema = z.object({
@@ -22,7 +23,7 @@ const FormSchema = z.object({
 
 type FormSchemaType = z.infer<typeof FormSchema>;
 
-const FormModal: React.FC<ModalProps> = ({ onClose }) => {
+const FormModal: React.FC<ModalProps> = ({ onClose, onFormSubmit }) => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       const response = await axios.post("/api/pet/register-event", {
@@ -41,11 +42,14 @@ const FormModal: React.FC<ModalProps> = ({ onClose }) => {
       );
 
       if (response.status === 200) {
+        onFormSubmit("Event added successfully", "new");
         console.log("Event Added Successfully");
       } else {
+        onFormSubmit("Not found Event", "new");
         console.log("Event Added Failed");
       }
     } catch (error) {
+      onFormSubmit("Failed to add event", "new");
       console.log("Something Went Wrong");
     }
   };

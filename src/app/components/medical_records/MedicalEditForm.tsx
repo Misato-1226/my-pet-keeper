@@ -7,6 +7,8 @@ import { z } from "zod";
 
 const FormSchema = z.object({
   title: z.string().min(1, "Title is required"),
+  veterinaryClinic: z.string().optional(),
+  veterinarian: z.string().optional(),
   notes: z.string().optional(),
   date: z.string().optional(),
 });
@@ -16,12 +18,15 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 interface PropsType {
   record: MedicalRecordType;
   onClose: () => void;
+  onFormSubmit: (message: string, formType: string) => void;
 }
 
 const MedicalEditForm = (props: PropsType) => {
-  const { record, onClose } = props;
+  const { record, onClose, onFormSubmit } = props;
   useEffect(() => {
     setValue("date", record.date);
+    setValue("veterinaryClinic", record.veterinaryClinic);
+    setValue("veterinarian", record.veterinarian);
     setValue("title", record.title);
     setValue("notes", record.notes);
   }, [record]);
@@ -44,11 +49,14 @@ const MedicalEditForm = (props: PropsType) => {
         date: values.date,
       });
       if (response.status === 200) {
+        onFormSubmit("Medical record updated successfully", "update");
         console.log("Medical Record Update success");
       } else {
+        onFormSubmit("Not found medical record", "update");
         console.log("Medical Record Update failed");
       }
     } catch (error) {
+      onFormSubmit("Failed to updated medical record", "update");
       console.error("Medical Record Update error", error);
     }
   };
@@ -71,7 +79,18 @@ const MedicalEditForm = (props: PropsType) => {
         {errors.title && (
           <p className="text-red-600 text-sm">{errors.title.message}</p>
         )}
-
+        <input
+          type="text"
+          placeholder="Veterinary Clinic"
+          {...register("veterinaryClinic")}
+          className="form-input ml-2 px-4 py-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="text"
+          placeholder="Veterinarian"
+          {...register("veterinarian")}
+          className="form-input ml-2 px-4 py-2 border border-gray-300 rounded-md"
+        />
         <textarea
           {...register("notes")}
           cols={10}

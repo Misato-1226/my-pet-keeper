@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 
-//new code 
+//new code
 
 interface Breed {
   name: string;
@@ -20,7 +20,7 @@ const FormSchema = z.object({
   petType: z.enum(["DOG", "CAT"], {
     errorMap: () => ({ message: "Pet type is required" }),
   }),
-  breed: z.string().optional(),
+  breed: z.union([z.string(), z.array(z.string())]).optional(),
   gender: z.enum(["MALE", "FEMALE", "UNKNOWN"], {
     errorMap: () => ({ message: "Gender is required" }),
   }),
@@ -43,7 +43,8 @@ export default function Register() {
   useEffect(() => {
     if (petType === "CAT") {
       const url = `https://api.thecatapi.com/v1/breeds`;
-      const api_key = "live_Mh2eS2NfWT60T1AANJ4PV4wnwWB8k3kYzwkabksUUeNRBjIMiR93fgnvVP5huhDR";
+      const api_key =
+        "live_Mh2eS2NfWT60T1AANJ4PV4wnwWB8k3kYzwkabksUUeNRBjIMiR93fgnvVP5huhDR";
 
       fetch(url, {
         headers: {
@@ -57,14 +58,15 @@ export default function Register() {
           return response.json();
         })
         .then((data) => {
-          setBreeds(data.filter((breed: { name: string }) => breed.name)); 
+          setBreeds(data.filter((breed: { name: string }) => breed.name));
         })
         .catch((error) => {
           console.error("Error fetching cat breeds:", error.message || error);
         });
     } else if (petType === "DOG") {
       const url = `https://api.thedogapi.com/v1/breeds`;
-      const api_key = "live_AHX3qC4g9vCFEJyXX6GzB3vgb1khxUgCmMwnxRbsZeT8UWdPc0qSUFzZWyDlFw8C";
+      const api_key =
+        "live_AHX3qC4g9vCFEJyXX6GzB3vgb1khxUgCmMwnxRbsZeT8UWdPc0qSUFzZWyDlFw8C";
 
       fetch(url, {
         headers: {
@@ -121,9 +123,20 @@ export default function Register() {
   const onSubmit = async (values: FormSchemaType) => {
     try {
       const formData = new FormData();
+
       formData.append("name", values.name);
       formData.append("petType", values.petType);
-      formData.append("breed", values.breed || "");
+      const breedArray = Array.isArray(values.breed)
+        ? values.breed
+        : values.breed
+        ? [values.breed]
+        : [];
+      // breedArray.forEach((breed) => {
+      //   formData.append("breed", breed);
+      // });
+      const breedToString = breedArray.join(", ");
+
+      formData.append("breed", breedToString);
       formData.append("gender", values.gender);
       formData.append("birthday", values.birthday || "");
 
@@ -146,9 +159,7 @@ export default function Register() {
 
   return (
     <div>
-      <h1 className="mt-24 text-3xl font-bold text-center">
-        Register a New Pet
-      </h1>
+      <h1 className="mt-24 text-3xl font-bold text-center">Register New Pet</h1>
       <form
         className="max-w-full p-12 md:mx-52 lg:mx-80"
         onSubmit={handleSubmit(onSubmit)}
@@ -308,8 +319,11 @@ export default function Register() {
               id="breed"
               {...register("breed")}
               className="border border-gray-300 p-2 rounded w-full mb-8"
+              multiple
+              size={10}
             >
               <option value="">Select a breed</option>
+
               {breeds.map((breed, index) => (
                 <option key={index} value={breed.name}>
                   {breed.name}
@@ -317,12 +331,12 @@ export default function Register() {
               ))}
             </select>
           </div>
-          <div className="w-full mx-auto text-center">
+          <div className="flex flex-col w-full md:w-2/4 mt-5 mx-auto text-center">
             <button
               type="submit"
               className="text-xl bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
             >
-              Register
+              Register New Pet
             </button>
           </div>
         </div>

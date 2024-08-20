@@ -10,6 +10,7 @@ import PetType from "@/types/PetType";
 import { useEffect, useContext, useState } from "react";
 import { PetsContext } from "@/app/contexts/Pets";
 import { useParams } from "next/navigation";
+import { log } from "console";
 
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -26,9 +27,16 @@ const FormSchema = z.object({
 
 type FormSchemaType = z.infer<typeof FormSchema>;
 
+interface Breed {
+  name: string;
+  [key: string]: any;
+}
+
 export default function Register() {
   const router = useRouter();
   const [image, setImage] = useState<string | null>(null);
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [petType, setPetType] = useState<"DOG" | "CAT" | "">("");
 
   const { id } = useParams() as { id: string };
 
@@ -45,12 +53,60 @@ export default function Register() {
   const [pet, setPet] = useState<PetType>();
 
   useEffect(() => {
+    if (petType === "CAT") {
+      const url = `https://api.thecatapi.com/v1/breeds`;
+      const api_key =
+        "live_Mh2eS2NfWT60T1AANJ4PV4wnwWB8k3kYzwkabksUUeNRBjIMiR93fgnvVP5huhDR";
+
+      fetch(url, {
+        headers: {
+          "x-api-key": api_key,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setBreeds(data.filter((breed: { name: string }) => breed.name));
+        })
+        .catch((error) => {
+          console.error("Error fetching cat breeds:", error.message || error);
+        });
+    } else if (petType === "DOG") {
+      const url = `https://api.thedogapi.com/v1/breeds`;
+      const api_key =
+        "live_AHX3qC4g9vCFEJyXX6GzB3vgb1khxUgCmMwnxRbsZeT8UWdPc0qSUFzZWyDlFw8C";
+
+      fetch(url, {
+        headers: {
+          "x-api-key": api_key,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setBreeds(data.filter((breed: { name: string }) => breed.name));
+        })
+        .catch((error) => {
+          console.error("Error fetching dog breeds:", error.message || error);
+        });
+    }
+  }, [petType]); // petTypeに依存
+
+  useEffect(() => {
     const getPet = async () => {
       try {
         const response = await axios.get(`/api/pet/get-pet/${id}`);
         if (response.status === 200) {
-          console.log(response.data);
           setPet(response.data);
+          setPetType(response.data.petType.toUpperCase() as "DOG" | "CAT");
         } else {
           console.log("Failed to get pet");
         }
@@ -59,6 +115,25 @@ export default function Register() {
       }
     };
 
+    const getPetImage = async () => {
+      try {
+        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        if (response.data.image && response.data.image.data) {
+          const base64Flag = `data:image/jpeg;base64,${bufferToBase64(
+            response.data.image.data
+          )}`;
+          setImageSrc(base64Flag);
+        }
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    getPet();
+    getPetImage();
+  }, [id]);
+
+  useEffect(() => {
     if (pet) {
       setValue("name", pet.name);
       setValue("petType", pet.petType.toUpperCase() as "DOG" | "CAT");
@@ -69,9 +144,18 @@ export default function Register() {
       );
       setValue("birthday", pet.birthday || "");
     }
+    console.log(pet?.image);
+  }, [pet, setValue, breeds]);
 
-    getPet();
-  }, [id, setValue]);
+  const bufferToBase64 = (buffer: Buffer) => {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -79,6 +163,7 @@ export default function Register() {
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
+          setImageSrc(reader.result);
           setImage(reader.result);
         }
       };
@@ -91,7 +176,14 @@ export default function Register() {
       const formData = new FormData();
       formData.append("name", values.name);
       formData.append("petType", values.petType);
-      formData.append("breed", values.breed || "");
+      const breedArray = Array.isArray(values.breed)
+        ? values.breed
+        : values.breed
+        ? [values.breed]
+        : [];
+      breedArray.forEach((breed) => {
+        formData.append("breed[]", breed);
+      });
       formData.append("gender", values.gender);
       formData.append("birthday", values.birthday || "");
 
@@ -110,17 +202,40 @@ export default function Register() {
       if (response.status === 200) {
         router.push("/auth/mypets");
       } else {
-        console.log("Update failed");
+        console.log("Update pet failed");
       }
     } catch (error) {
-      console.error("Update error", error);
+      console.error("Update pet error", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete this pet profile?")) {
+      try {
+        const petId = parseInt(id, 10);
+        const response = await axios.delete(`/api/pet/delete-pet`, {
+          data: {
+            petId: petId,
+          },
+        });
+        if (response.status === 200) {
+          console.log("Delete pet successfully");
+          router.push("/auth/mypets");
+        } else {
+          console.log("Not found pet");
+        }
+      } catch (error) {
+        console.log("Failed to delete pet");
+      }
+    } else {
+      console.log("Delete action cancelled");
     }
   };
 
   return (
     <div>
       <h1 className="mt-24 text-3xl font-bold text-center">
-        Update Pet Information
+        Edit Pet Information
       </h1>
       <form
         className="max-w-full p-12 md:mx-52 lg:mx-80"
@@ -135,9 +250,9 @@ export default function Register() {
               accept="image/*"
               onChange={handleImageUpload}
             />
-            {image ? (
+            {imageSrc ? (
               <Image
-                src={image}
+                src={imageSrc}
                 width={150}
                 height={150}
                 alt="Uploaded Preview"
@@ -278,19 +393,30 @@ export default function Register() {
               id="breed"
               {...register("breed")}
               className="border border-gray-300 p-2 rounded w-full mb-8"
+              multiple
+              size={10}
             >
               <option value="">Select a breed</option>
-              <option value="breed1">Breed 1</option>
-              <option value="breed2">Breed 2</option>
+              {breeds.map((breed, index) => (
+                <option key={index} value={breed.name}>
+                  {breed.name}
+                </option>
+              ))}
             </select>
           </div>
-          <div className="w-full mx-auto text-center">
+          <div className="flex flex-col w-full md:w-2/4 mx-auto mt-5 text-center">
             <button
               type="submit"
               className="text-xl bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500"
             >
-              Update
+              Update Profile
             </button>
+            <p
+              onClick={handleDelete}
+              className="text-xl text-red-600 mt-10 py-2 px-4 underline cursor-pointer"
+            >
+              Delete Profile
+            </p>
           </div>
         </div>
       </form>

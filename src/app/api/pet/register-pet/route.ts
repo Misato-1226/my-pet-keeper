@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
         : gender === "MALE"
         ? Gender.MALE
         : Gender.UNKNOWN;
+    console.log("breed:", breed);
 
     const pet = await prisma.pet.create({
       data: {

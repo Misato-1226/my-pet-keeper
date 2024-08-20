@@ -1,4 +1,6 @@
+import { authOptions } from "@/utils/auth";
 import prisma from "@/utils/db";
+import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -10,6 +12,12 @@ const weightSchema = z.object({
 
 export const POST = async (req: Request) => {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    const userId = Number(session.user.id);
     const body = await req.json();
     const { date, notes, weight } = weightSchema.parse(body);
 
@@ -17,6 +25,7 @@ export const POST = async (req: Request) => {
 
     const newWeight = await prisma.weight.create({
       data: {
+        userId,
         date,
         notes,
         weight: parseInt(weight ?? "0", 10),

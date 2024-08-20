@@ -20,9 +20,14 @@ interface PropsType {
     event: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>
   ) => void;
   modalContent: CalendarType;
+  onFormSubmit: (message: string, formType: string) => void;
 }
 //dateがundefinedになって、時間も変な形式になってるから変える。
-export const EditModal: React.FC<PropsType> = ({ onEdit, modalContent }) => {
+export const EditModal: React.FC<PropsType> = ({
+  onEdit,
+  modalContent,
+  onFormSubmit,
+}) => {
   useEffect(() => {
     const formatTime = (time: string | undefined): string => {
       if (!time) return "";
@@ -65,11 +70,14 @@ export const EditModal: React.FC<PropsType> = ({ onEdit, modalContent }) => {
       );
 
       if (response.status === 200) {
+        onFormSubmit("Event updated successfully", "update");
         console.log("Event Updated Successfully");
       } else {
+        onFormSubmit("Not found event", "update");
         console.log("Event Failed to Update");
       }
     } catch (error) {
+      onFormSubmit("Failed to update event", "update");
       console.log("Something Went Wrong");
     }
   };

@@ -40,6 +40,10 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 
 const WeightTracking = () => {
   const { id } = useParams() as { id: string };
+  const [weightRecords, setWeightRecords] = useState<WeightRecordType[]>([]);
+  const [newRecord, setNewRecord] = useState({ date: "", weight: 0, note: "" });
+  const [unit, setUnit] = useState("kg"); // 'kg' for kilograms, 'lb' for pounds
+  const [message, setMessage] = useState<string | null>(null);
 
   //useEffectで体重データを取得。
   useEffect(() => {
@@ -64,10 +68,6 @@ const WeightTracking = () => {
     };
     getWeights();
   }, [id]);
-
-  const [weightRecords, setWeightRecords] = useState<WeightRecordType[]>([]);
-  const [newRecord, setNewRecord] = useState({ date: "", weight: 0, note: "" });
-  const [unit, setUnit] = useState("kg"); // 'kg' for kilograms, 'lb' for pounds
 
   const {
     register,
@@ -111,6 +111,14 @@ const WeightTracking = () => {
     }
   };
 
+  const handleDeleteMessage = (message: string) => {
+    setMessage(message);
+    setTimeout(() => {
+      setMessage(null); // メッセージを消去（オプション）
+    }, 5000); // 3秒後にメッセージを消去（オプション）
+    // データを再取得するなどの処理を追加できます
+  };
+
   const handleDeleteRecord = async (id: number) => {
     if (confirm("Are you sure you want to delete this weight record?")) {
       try {
@@ -121,12 +129,15 @@ const WeightTracking = () => {
         });
         if (response.status === 200) {
           console.log("Weight Deleted Successfully");
+          handleDeleteMessage("Weight record deleted successfully");
         } else {
           console.log("Weight not Found");
+          handleDeleteMessage("Weight record not found");
         }
         setWeightRecords(weightRecords.filter((record) => record.id !== id));
       } catch (error) {
         console.log("Weight Delete Failed", error);
+        handleDeleteMessage("Failed to delete weight record");
       }
     } else {
       console.log("Delete action cancelled");
@@ -176,6 +187,11 @@ const WeightTracking = () => {
       <h1 className="text-center text-3xl font-semibold p-16">
         Weights Tracking
       </h1>
+      {message && (
+        <p className="text-center text-xl font-semibold mt-4 text-red-600">
+          {message}
+        </p>
+      )}
       <div className="p-20">
         <select
           className="text-2xl"

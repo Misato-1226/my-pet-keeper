@@ -6,10 +6,11 @@ interface PropsType {
   onModalClose: () => void;
   onEdit: () => void;
   record: MedicalRecordType;
+  onFormSubmit: (message: string, formType: string) => void;
 }
 
 const MedicalModal = (props: PropsType) => {
-  const { onModalClose, onEdit, record } = props;
+  const { onModalClose, onEdit, record, onFormSubmit } = props;
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this medical record?")) {
@@ -20,12 +21,15 @@ const MedicalModal = (props: PropsType) => {
           },
         });
         if (response.status === 200) {
+          onFormSubmit("Medical record deleted successfully", "delete");
           console.log("Medical Record Deleted Successfully");
         }
       } catch (error) {
+        onFormSubmit("Not found medical record", "delete");
         console.error("Error deleting medical record", error);
       }
     } else {
+      onFormSubmit("Failed to delete medical record", "delete");
       console.log("Delete action cancelled");
     }
   };
@@ -43,9 +47,14 @@ const MedicalModal = (props: PropsType) => {
             x
           </button>
         </div>
-        <h1 className="text-3xl mb-4 font-semibold">{record.title}</h1>
-        <span>{record.date}</span>
-        <p className="text-xl">{record.notes}</p>
+        <h1 className="text-3xl mb-4 font-semibold">
+          {record.title}
+          <span className="ml-3 text-base font-normal">
+            {record.veterinaryClinic}: {record.veterinarian}
+          </span>
+        </h1>
+        <h4>{record.date}</h4>
+        <p className="text-xl py-10">{record.notes}</p>
 
         <div className="px-3 inline-block">
           <button
