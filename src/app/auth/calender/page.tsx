@@ -156,7 +156,7 @@ export default function Calendar() {
           onEdit={handleEditModal}
         />
       )}
-      {isEdit && (
+      {isEdit && modalContent && (
         <EditModal
           onEdit={handleEditModal}
           modalContent={modalContent}
