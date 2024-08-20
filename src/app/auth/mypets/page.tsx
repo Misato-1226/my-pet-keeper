@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 // Fetch pets data from server
 export default function Mypets() {
   const [pets, setPets] = useState<PetType[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPets = async () => {
@@ -22,6 +23,8 @@ export default function Mypets() {
         }
       } catch (error) {
         console.error("Failed to fetch pets", error);
+      } finally {
+        setLoading(false);
       }
     };
     getPets();
@@ -38,15 +41,19 @@ export default function Mypets() {
         </Link>
       </div>
       <h1 className="text-center text-4xl font-bold">My Pets</h1>
-      {pets.length > 0 ? (
-        <div className="md:grid grid-cols-2 justify-center gap-24 p-12 md:p-12 lg:p-52">
-          {pets.map((pet) => (
-            <PetCard key={pet.id} pet={pet} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-xl mt-36">No pet registered</p>
-      )}
+      <div className=" p-4 rounded-lg shadow-md md:px-3">
+        {loading ? (
+          <p className="p-12 text-center">Loading...</p>
+        ) : pets.length > 0 ? (
+          <div className="justify-center items-center md:grid grid-cols-2 gap-24 p-12 md:p-12 lg:py-52 lg:px-20">
+            {pets.map((pet) => (
+              <PetCard key={pet.id} pet={pet} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-center text-xl mt-36">No pet registered</p>
+        )}
+      </div>
     </>
   );
 }

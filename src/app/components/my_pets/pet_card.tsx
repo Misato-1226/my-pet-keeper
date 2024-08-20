@@ -39,17 +39,20 @@ export default function PetCard({ pet }: { pet: PetType }) {
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
             {pet.name}
           </h5>
-
-          <div className="grid grid-cols-2 md:gap-x-24 gap-x-48 text-sm text-gray-500 dark:text-gray-400 mx-40 leading-5">
-            <div>Pet Type:</div>
-            <div>{pet.petType}</div>
-            <div>Breed:</div>
-            <div>{pet.breed}</div>
-            <div>Gender:</div>
-            <div>{pet.gender}</div>
-            <div>Birthday:</div>
-            <div>{pet.birthday}</div>
-          </div>
+        </div>
+        <div className="lg:mx-48 md:ml-10 mx-8 flex flex-col md:justify-center items-center text-sm text-gray-500 dark:text-gray-400 leading-5">
+          <p className="lg:flex lg:justify-between w-full">
+            Pet Type:<span className="lg:ml-0 ml-3">{pet.petType}</span>
+          </p>
+          <p className="lg:flex lg:justify-between w-full">
+            Breed:<span className="lg:ml-0 ml-3">{pet.breed}</span>
+          </p>
+          <p className="lg:flex lg:justify-between w-full">
+            Gender:<span className="lg:ml-0 ml-3">{pet.gender}</span>
+          </p>
+          <p className="lg:flex lg:justify-between w-full">
+            Birthday:<span className="lg:ml-0 ml-3">{pet.birthday}</span>
+          </p>
         </div>
       </Link>
       <div className="flex justify-center my-4 md:mt-6">

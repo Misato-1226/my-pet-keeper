@@ -17,6 +17,9 @@ const MedicalRecords = () => {
   const [medicalRecords, setMedicalRecords] = useState<MedicalRecordType[]>();
   const [activeRecordId, setActiveRecordId] = useState<number | null>(null);
   const [recordToEdit, setRecordToEdit] = useState<MedicalRecordType>();
+  const [formMessage, setFormMessage] = useState<string | null>(null);
+  const [editMessage, setEditMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const petId = parseInt(id, 10);
 
   useEffect(() => {
@@ -35,12 +38,14 @@ const MedicalRecords = () => {
           }
         } catch (error) {
           console.error("Error fetching Medical Records", error);
+        } finally {
+          setLoading(false);
         }
       }
     };
 
     getMedicalRecord();
-  }, [petId]);
+  }, [petId, formMessage, editMessage]);
 
   const handleClick = () => {
     setIsClick(true);
@@ -68,11 +73,36 @@ const MedicalRecords = () => {
     setIsClick(false);
   };
 
+  const handleFormSubmit = (message: string, formType: string) => {
+    if (formType === "new") {
+      setFormMessage(message); // メッセージを設定
+    } else {
+      setEditMessage(message);
+    }
+    setIsClick(false);
+    setIsEdit(false);
+    setTimeout(() => {
+      setFormMessage(null);
+      setEditMessage(null); // メッセージを消去（オプション）
+    }, 5000); // 3秒後にメッセージを消去（オプション）
+    // データを再取得するなどの処理を追加できます
+  };
+
   return (
     <div>
       <h1 className="text-center text-3xl font-semibold p-16">
         Medical Records
       </h1>
+      {formMessage && (
+        <p className="text-center text-xl font-semibold mt-4 text-blue-600">
+          {formMessage}
+        </p>
+      )}
+      {editMessage && (
+        <p className="text-center text-xl font-semibold mt-4 text-red-600">
+          {editMessage}
+        </p>
+      )}
       <div className="px-48 text-right">
         <button
           onClick={handleClick}
@@ -82,12 +112,20 @@ const MedicalRecords = () => {
         </button>
       </div>
 
-      {isClick && <MedicalForm onClose={handleClose} />}
+      {isClick && (
+        <MedicalForm onClose={handleClose} onFormSubmit={handleFormSubmit} />
+      )}
       {recordToEdit && isEdit && (
-        <MedicalEditForm record={recordToEdit} onClose={handleClose} />
+        <MedicalEditForm
+          record={recordToEdit}
+          onClose={handleClose}
+          onFormSubmit={handleFormSubmit}
+        />
       )}
 
-      {medicalRecords && medicalRecords.length > 0 ? (
+      {loading ? (
+        <p className="p-12 text-center">Loading...</p>
+      ) : medicalRecords && medicalRecords.length > 0 ? (
         <div className="flex justify-center flex-col">
           {medicalRecords.map((record) => (
             <div key={record.id}>
@@ -98,6 +136,7 @@ const MedicalRecords = () => {
                 <MedicalCard
                   record={record}
                   onEdit={() => handleEditOpen(record)}
+                  onFormSubmit={handleFormSubmit}
                 />
               </div>
               {isModal && activeRecordId === record.id && (
@@ -105,6 +144,7 @@ const MedicalRecords = () => {
                   record={record}
                   onModalClose={handleModalClose}
                   onEdit={() => handleEditOpen(record)}
+                  onFormSubmit={handleFormSubmit}
                 />
               )}
             </div>

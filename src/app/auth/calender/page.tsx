@@ -17,6 +17,8 @@ export default function Calendar() {
   const [calendarKey, setCalendarKey] = useState(0);
   const [modalContent, setModalContent] = useState<CalendarType>();
   const [events, setEvents] = useState<CalendarType[]>([]);
+  const [formMessage, setFormMessage] = useState<string | null>(null);
+  const [editMessage, setEditMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const getEvent = async () => {
@@ -37,10 +39,11 @@ export default function Calendar() {
     };
 
     const transformEvent = (event: CalendarType) => {
+      const defaultTime = "09:00";
       return {
         id: event.id.toString(),
-        start: `${event.date}T${event.startTime}`,
-        end: `${event.date}T${event.endTime}`,
+        start: `${event.date}T${event.startTime || defaultTime}`,
+        end: `${event.date}T${event.endTime || defaultTime}`,
         title: event.event,
         description: event.description || "",
         backgroundColor: "blue", // 必要に応じて色を設定
@@ -49,27 +52,12 @@ export default function Calendar() {
       };
     };
     getEvent();
-  }, []);
+  }, [formMessage, editMessage]);
 
   const handleEditModal = () => {
     setIsEdit(!isEdit);
     setIsEventModalOpen(false);
   };
-
-  // const example = [
-  //   {
-  //     id: "a", // ユニークID
-  //     start: "2024-08-10T05:20:00", // イベント開始日
-  //     end: "2024-08-10T08:40:00", // イベント終了日
-  //     title: "Grooming", // イベントのタイトル
-  //     description:
-  //       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus pharetra, nisl vitae efficitur ornare, mauris lectus molestie nisl, in luctus nisl arcu eget urna. Proin finibus magna tincidunt tortor laoreet, vitae efficitur mi tristique. Vestibulum lacinia condimentum pretium. Mauris quis ipsum sed neque blandit mollis commodo placerat ex. Duis rhoncus, mi vel mollis interdum, risus neque tincidunt velit, quis dignissim nisi nisi ut dui.", // イベントの詳細
-  //     backgroundColor: "blue", // 背景色
-  //     borderColor: "blue", // 枠線色
-  //     editable: true, // イベント操作の可否
-  //   },
-  //   // 省略
-  // ];
 
   const handleCustomButtonClick = () => {
     setIsFormModalOpen(!isFormModalOpen);
@@ -104,8 +92,33 @@ export default function Calendar() {
   const handleEventModalClose = () => {
     setIsEventModalOpen(false);
   };
+
+  const handleFormSubmit = (message: string, formType: string) => {
+    if (formType === "new") {
+      setFormMessage(message);
+    } else {
+      setEditMessage(message);
+    }
+    setIsFormModalOpen(false);
+    setIsEdit(false);
+    setTimeout(() => {
+      setFormMessage(null);
+      setEditMessage(null);
+    }, 5000);
+    console.log("triggered handleFormSubmit");
+  };
   return (
     <>
+      {formMessage && (
+        <p className="text-center text-xl font-semibold mt-4 text-blue-600">
+          {formMessage}
+        </p>
+      )}
+      {editMessage && (
+        <p className="text-center text-xl font-semibold mt-4 text-red-600">
+          {editMessage}
+        </p>
+      )}
       <div className="p-12">
         <FullCalendar
           key={calendarKey}
@@ -130,7 +143,12 @@ export default function Calendar() {
         />
       </div>
 
-      {isFormModalOpen && <FormModal onClose={handleCustomButtonClick} />}
+      {isFormModalOpen && (
+        <FormModal
+          onClose={handleCustomButtonClick}
+          onFormSubmit={handleFormSubmit}
+        />
+      )}
       {isEventModalOpen && modalContent && (
         <EventModal
           onClose={handleEventModalClose}
@@ -139,7 +157,11 @@ export default function Calendar() {
         />
       )}
       {isEdit && (
-        <EditModal onEdit={handleEditModal} modalContent={modalContent} />
+        <EditModal
+          onEdit={handleEditModal}
+          modalContent={modalContent}
+          onFormSubmit={handleFormSubmit}
+        />
       )}
     </>
   );

@@ -11,7 +11,7 @@ export async function PUT(req: NextRequest) {
     const formData = await req.formData();
     const name = formData.get("name") as string;
     const petType = formData.get("petType") as string;
-    const breed = formData.get("breed") as string;
+    const breed = formData.getAll("breed") as string[];
     const gender = formData.get("gender") as string;
     const birthday = formData.get("birthday") as string;
     const imageBlob = formData.get("image") as Blob | null;
@@ -36,7 +36,7 @@ export async function PUT(req: NextRequest) {
         data: {
           name,
           petType: petTypeEnum,
-          breed,
+          breed: breed.join(", "),
           gender: genderEnum,
           birthday,
           image,

@@ -7,10 +7,13 @@ import PetType from "@/types/PetType";
 
 const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
   const [imageSrcs, setImageSrcs] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (pets.length === 0) return;
-
+    if (pets.length === 0) {
+      setLoading(false);
+      return;
+    }
     const newImageSrcs: { [key: string]: string } = {};
 
     pets.forEach((pet) => {
@@ -22,8 +25,11 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
         reader.onloadend = () => {
           newImageSrcs[pet.name] = reader.result as string;
           setImageSrcs((prevSrcs) => ({ ...prevSrcs, ...newImageSrcs }));
+          setLoading(false);
         };
         reader.readAsDataURL(imageBlob);
+      } else {
+        setLoading(false);
       }
     });
   }, [pets]);
@@ -34,8 +40,10 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
         <Link href="/auth/mypets">My Pets</Link>
       </h2>
 
-      <div className="flex justify-center items-center bg-white p-4 rounded-lg shadow-md md:px-36">
-        {pets.length > 0 ? (
+      <div className="flex justify-center items-center bg-white p-4 rounded-xl shadow-md md:px-36">
+        {loading ? (
+          <p className="p-12">Loading...</p>
+        ) : pets.length > 0 ? (
           pets.map((pet, index) => (
             <div
               key={index}
@@ -47,8 +55,8 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
                     <Image
                       src={imageSrcs[pet.name]}
                       alt={pet.name}
-                      width={200} // md:w-28 = 7rem = 112px
-                      height={50} // md:h-28 = 7rem = 112px
+                      width={200}
+                      height={200}
                       className="md:w-32 md:h-32 mb-3 rounded-full shadow-lg w-16 h-16 object-cover"
                     />
                   ) : (
@@ -60,7 +68,7 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
             </div>
           ))
         ) : (
-          <p className="p-12">No registered pet</p>
+          <p className="p-12">Pet not Found</p>
         )}
       </div>
     </div>

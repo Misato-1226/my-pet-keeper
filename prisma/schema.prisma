@@ -18,7 +18,9 @@ model User {
   email   String   @unique @db.VarChar(255)
   password String
   pets      Pet[]
-  calendarEvents Calendar[] 　@relation("PetCalendar")
+  calendarEvents Calendar[] 　@relation("UserCalendar")
+  petsWeights Weight[] @relation("UserWeights")
+  petsMedicalRecords　MedicalRecord[]  @relation("UserMedicalRecord")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -45,6 +47,8 @@ model Weight {
   date   String
   notes  String?
   weight  Float
+  userId Int
+  user        User      @relation("UserWeights",　fields: [userId], references: [id])
   petId  Int
   pet    Pet      @relation("PetWeights", fields: [petId], references: [id]) 
   createdAt DateTime @default(now())
@@ -55,8 +59,11 @@ model MedicalRecord {
   id       Int      @id @default(autoincrement())
   date     String
   title    String
+  veterinaryClinic String?
+  veterinarian String?
   notes    String?
-  vetName String?
+  userId Int
+  user     User      @relation("UserMedicalRecord",　fields: [userId], references: [id])
   petId    Int
   pet      Pet      @relation("PetMedicalRecord", fields: [petId], references: [id])
   createdAt DateTime @default(now())
@@ -71,7 +78,7 @@ model Calendar {
   startTime   String?
   endTime     String?
   userId      Int
-  user        User      @relation("PetCalendar",　fields: [userId], references: [id])
+  user        User      @relation("UserCalendar",　fields: [userId], references: [id])
   petId       Int?
   pet         Pet?      @relation("PetCalendar", fields: [petId], references: [id])
   createdAt   DateTime @default(now())
