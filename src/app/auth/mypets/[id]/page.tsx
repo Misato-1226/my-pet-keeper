@@ -68,7 +68,9 @@ export default function PetDetail() {
               height={200}
             />
           ) : (
-            <p>Loading...</p>
+            <div className="flex justify-center items-center min-h-[200px]">
+              <p className="text">Loading...</p>
+            </div>
           )}
           <h1 className="text-4xl text-center">{pet?.name}</h1>
         </div>
@@ -84,7 +86,7 @@ export default function PetDetail() {
           <div>{pet?.breed}</div>
         </div>
 
-        <div className="flex flex-col space-y-8 p-4 md:w-2/5">
+        <div className="flex flex-col space-y-8 p-4 md:w-2/5 mb-24 mt-3">
           <Link
             href={`${id}/weight-tracking`}
             className=" w-full flex justify-between items-center bg-gray-200 px-6 py-4 rounded-full shadow-lg text-lg text-black hover:bg-gray-300 transition duration-300"

@@ -43,7 +43,9 @@ export default function Mypets() {
       <h1 className="text-center text-4xl font-bold">My Pets</h1>
       <div className=" p-4 rounded-lg shadow-md md:px-3">
         {loading ? (
-          <p className="p-12 text-center">Loading...</p>
+          <div className="flex justify-center items-center min-h-[510px]">
+            <p className="text-center">Loading...</p>
+          </div>
         ) : pets.length > 0 ? (
           <div className="justify-center items-center md:grid grid-cols-2 gap-24 p-12 md:p-12 lg:py-52 lg:px-20">
             {pets.map((pet) => (

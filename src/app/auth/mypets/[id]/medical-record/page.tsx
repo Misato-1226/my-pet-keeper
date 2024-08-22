@@ -75,7 +75,7 @@ const MedicalRecords = () => {
 
   const handleFormSubmit = (message: string, formType: string) => {
     if (formType === "new") {
-      setFormMessage(message); // メッセージを設定
+      setFormMessage(message);
     } else {
       setEditMessage(message);
     }
@@ -83,9 +83,8 @@ const MedicalRecords = () => {
     setIsEdit(false);
     setTimeout(() => {
       setFormMessage(null);
-      setEditMessage(null); // メッセージを消去（オプション）
-    }, 5000); // 3秒後にメッセージを消去（オプション）
-    // データを再取得するなどの処理を追加できます
+      setEditMessage(null);
+    }, 5000);
   };
 
   return (
@@ -106,7 +105,7 @@ const MedicalRecords = () => {
       <div className="px-48 text-right">
         <button
           onClick={handleClick}
-          className="text-xl text-gray-900 bg-customGrey1 border border-gray-300 focus:outline-none hover:bg-gray-200 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+          className="text-xl text-gray-900 bg-gray-300 hover:bg-gray-400 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 "
         >
           New Medical Record
         </button>
@@ -124,7 +123,9 @@ const MedicalRecords = () => {
       )}
 
       {loading ? (
-        <p className="p-12 text-center">Loading...</p>
+        <div className="flex justify-center items-center min-h-[500px]">
+          <p className="p-12 text-center">Loading...</p>
+        </div>
       ) : medicalRecords && medicalRecords.length > 0 ? (
         <div className="flex justify-center flex-col">
           {medicalRecords.map((record) => (
@@ -151,7 +152,9 @@ const MedicalRecords = () => {
           ))}
         </div>
       ) : (
-        <p className="text-center mt-10">No Medical Records found</p>
+        <div className="flex justify-center items-center min-h-[500px]">
+          <p className="text-center mt-10">No Medical Records found</p>
+        </div>
       )}
     </div>
   );

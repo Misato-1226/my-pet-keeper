@@ -214,10 +214,11 @@ const WeightTracking = () => {
               setNewRecord({ ...newRecord, date: e.target.value })
             }
           />
+          <label className="text-lg ml-6">Weights:</label>
           <input
             type="number"
             {...register("weight")}
-            className="text-2xl ml-6"
+            className="text-2xl"
             onChange={(e) =>
               setNewRecord({
                 ...newRecord,
@@ -228,7 +229,7 @@ const WeightTracking = () => {
         </div>
         <button
           onClick={handleSubmit(handleAddRecord)}
-          className="bg-customBlue2 text-white text-lg px-3 py-2 rounded-lg hover:opacity-70"
+          className="bg-sky-600 text-white text-lg px-3 my-8 py-2 rounded-lg hover:bg-sky-700"
         >
           Add Record
         </button>

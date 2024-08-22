@@ -106,10 +106,10 @@ const MedicalForm = ({
             className="
           px-4
           py-2
-          bg-green-500
+          bg-slate-400
           text-white
           rounded-md
-          hover:bg-green-600
+          hover:bg-slate-500
           mt-2
           "
             onClick={onClose}
@@ -118,7 +118,7 @@ const MedicalForm = ({
           </button>
           <button
             type="submit"
-            className="ml-3 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 mt-2"
+            className="ml-3 px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 mt-2"
           >
             Add Record
           </button>
