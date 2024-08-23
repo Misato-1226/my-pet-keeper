@@ -4,16 +4,32 @@ import { FC, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import PetType from "@/types/PetType";
+import axios from "axios";
 
-const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
+const PetPreviewBar = () => {
   const [imageSrcs, setImageSrcs] = useState<{ [key: string]: string }>({});
+  const [pets, setPets] = useState<PetType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (pets.length === 0) {
-      setLoading(false);
-      return;
-    }
+    const getPets = async () => {
+      try {
+        const response = await axios.get("/api/pet/get-all-pets");
+        if (response.status === 200) {
+          console.log("Get Pets Successfully", response.data);
+          setPets(response.data);
+        } else {
+          console.log("Failed to get pets");
+          setError(true);
+        }
+      } catch (error) {
+        console.log("Failed to fetching pets");
+      } finally {
+        setLoading(false);
+      }
+    };
+    getPets();
     const newImageSrcs: { [key: string]: string } = {};
 
     pets.forEach((pet) => {
@@ -43,7 +59,9 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
       <div className="flex justify-center items-center bg-white p-4 rounded-xl shadow-md md:px-36">
         {loading ? (
           <p className="p-12">Loading...</p>
-        ) : pets.length > 0 ? (
+        ) : error ? (
+          <p className="p-12">Pet not Found</p>
+        ) : (
           pets.map((pet, index) => (
             <div
               key={index}
@@ -67,8 +85,6 @@ const PetPreviewBar: FC<{ pets: PetType[] }> = ({ pets }) => {
               </Link>
             </div>
           ))
-        ) : (
-          <p className="p-12">Pet not Found</p>
         )}
       </div>
     </div>

@@ -11,26 +11,9 @@ import PetType from "@/types/PetType";
 import UpcomingEvent from "../../components/main_page/UpcomingEvent";
 
 export default function Home() {
-  const [pets, setPets] = useState<PetType[]>([]);
-  useEffect(() => {
-    const getPets = async () => {
-      try {
-        const response = await axios.get("/api/pet/get-all-pets");
-        if (response.status === 200) {
-          console.log("Get Pets Successfully", response.data);
-          setPets(response.data);
-        } else {
-          console.log("Failed to get pets");
-        }
-      } catch (error) {
-        console.log("Failed to fetching pets");
-      }
-    };
-    getPets();
-  }, []);
   return (
-    <div className="flex flex-col gap-y-24 my-28">
-      <PetPreviewBar pets={pets} />
+    <div className="flex flex-col gap-y-24 mt-28">
+      <PetPreviewBar />
       <UpcomingEvent />
       <Weather />
 

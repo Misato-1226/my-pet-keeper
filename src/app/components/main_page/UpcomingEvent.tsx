@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 export default function UpcomingEvent() {
   const [upcomingEvents, setUpcomingEvents] = useState<CalendarType[]>([]);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getEvents = async () => {
@@ -39,6 +41,9 @@ export default function UpcomingEvent() {
         }
       } catch (error) {
         console.log("Something went wrong", error);
+        setError(true);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -69,30 +74,42 @@ export default function UpcomingEvent() {
     <div>
       <h2 className="text-2xl font-bold mb-6 px-12 lg:px-36">Upcoming Event</h2>
       <div className="flex justify-center items-center">
-        <div className="grid md:grid-cols-2 gap-6 sm:p-8 w-9/12">
-          {upcomingEvents.map((event, index) => (
-            <Link key={index} href="/pet/calendar">
-              <div className="bg-stone-300 rounded-2xl flex justify-between items-center p-5 hover:scale-95 cursor-pointer duration-500">
-                <Image
-                  src={getIconSrc(event.event)} // デフォルト画像を指定
-                  alt="event icon"
-                  width={75}
-                  height={75}
-                />
-                <div>
-                  <h1 className="text-lg font-semibold">{event.event}</h1>
-                  <h2>{formatDate(event.date)}</h2>
+        <div
+          className={
+            upcomingEvents.length > 0
+              ? "grid md:grid-cols-2 gap-6 sm:p-8 w-9/12"
+              : ""
+          }
+        >
+          {loading ? (
+            <p>Loading...</p>
+          ) : error || upcomingEvents.length <= 0 ? (
+            <p>Upcoming events not found</p>
+          ) : (
+            upcomingEvents.map((event, index) => (
+              <Link key={index} href="/pet/calendar">
+                <div className="bg-stone-300 rounded-2xl flex justify-between items-center p-5 hover:scale-95 cursor-pointer duration-500">
+                  <Image
+                    src={getIconSrc(event.event)} // デフォルト画像を指定
+                    alt="event icon"
+                    width={75}
+                    height={75}
+                  />
+                  <div>
+                    <h1 className="text-lg font-semibold">{event.event}</h1>
+                    <h2>{formatDate(event.date)}</h2>
+                  </div>
+                  {event.startTime && event.endTime ? (
+                    <span className="sm:">
+                      {event.startTime}~{event.endTime}
+                    </span>
+                  ) : (
+                    <span className="sm:">Time not set</span>
+                  )}
                 </div>
-                {event.startTime && event.endTime ? (
-                  <span className="sm:">
-                    {event.startTime}~{event.endTime}
-                  </span>
-                ) : (
-                  <span className="sm:">Time not set</span>
-                )}
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </div>
