@@ -53,7 +53,7 @@ export const EditModal: React.FC<PropsType> = ({
   }, []);
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await axios.put("/api/pet/update-event", {
+      const response = await axios.put("/api/pet/calendar", {
         event: values.event,
         date: values.date,
         description: values.description,

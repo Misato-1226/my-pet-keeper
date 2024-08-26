@@ -22,7 +22,7 @@ const MedicalCard = (props: PropsType) => {
     event.stopPropagation(); // イベントのバブリングを防ぐ
     if (confirm("Are you sure you want to delete this medical record?")) {
       try {
-        const response = await axios.delete(`/api/pet/delete-medical-record`, {
+        const response = await axios.delete(`/api/pet/medical_record`, {
           data: {
             id: record.id,
           },

@@ -1,6 +1,5 @@
-import { authOptions } from "@/utils/auth";
 import prisma from "@/utils/db";
-import { getServerSession } from "next-auth/next";
+import { handleSession } from "@/utils/session";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -14,12 +13,11 @@ const medicalSchema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user) {
+    const { authorized, userId } = await handleSession();
+    if (!authorized || userId === null) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const userId = Number(session.user.id);
+
     const body = await req.json();
     const { title, veterinaryClinic, veterinarian, notes, date } =
       medicalSchema.parse(body);
@@ -51,3 +49,45 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export const PUT = async (req: Request) => {
+  try {
+    const { id, date, title, notes } = await req.json();
+    const updateRecord = await prisma.medicalRecord.update({
+      where: {
+        id: id,
+      },
+      data: {
+        date,
+        title,
+        notes,
+      },
+    });
+    return NextResponse.json({ status: 200, updateRecord });
+  } catch (error) {
+    console.error("Failed to update record:", error);
+    return NextResponse.json({ status: 500, error: "Failed to update record" });
+  }
+};
+
+export const DELETE = async (req: Request) => {
+  try {
+    const { id } = await req.json();
+
+    const deleteRecord = await prisma.medicalRecord.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "Record deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete record" },
+      { status: 500 }
+    );
+  }
+};

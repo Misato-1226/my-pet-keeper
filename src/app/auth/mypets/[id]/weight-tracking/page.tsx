@@ -49,7 +49,7 @@ const WeightTracking = () => {
   useEffect(() => {
     const getWeights = async () => {
       try {
-        const response = await axios.get(`/api/pet/get-all-weights/${id}`);
+        const response = await axios.get(`/api/pet/weights/${id}`);
         const weights = response.data;
         weights.sort(
           (a: WeightRecordType, b: WeightRecordType) =>
@@ -95,7 +95,7 @@ const WeightTracking = () => {
     setNewRecord({ date: "", weight: 0, note: "" });
 
     try {
-      const response = await axios.post("/api/pet/register-weight", {
+      const response = await axios.post("/api/pet/weights", {
         date: values.date,
         weight: values.weight,
         notes: values.notes,
@@ -122,7 +122,7 @@ const WeightTracking = () => {
   const handleDeleteRecord = async (id: number) => {
     if (confirm("Are you sure you want to delete this weight record?")) {
       try {
-        const response = await axios.delete("/api/pet/delete-weight", {
+        const response = await axios.delete("/api/pet/weights", {
           data: {
             id,
           },

@@ -3,16 +3,20 @@ import axios from "axios";
 import React from "react";
 
 interface PropsType {
-  onClose: (
-    event: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>
-  ) => void;
+  onClose: () => void;
   onEdit: (
     event: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>
   ) => void;
   modalContent: CalendarType;
+  onFormSubmit: (message: string, formType: string) => void;
 }
 
-const EventModal: React.FC<PropsType> = ({ onClose, onEdit, modalContent }) => {
+const EventModal: React.FC<PropsType> = ({
+  onClose,
+  onEdit,
+  modalContent,
+  onFormSubmit,
+}) => {
   const startTime = modalContent.startTime
     ? new Date(modalContent.startTime).toLocaleTimeString([], {
         hour: "2-digit",
@@ -29,20 +33,24 @@ const EventModal: React.FC<PropsType> = ({ onClose, onEdit, modalContent }) => {
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this event?")) {
       try {
-        const response = await axios.delete("/api/pet/delete-event", {
+        const response = await axios.delete("/api/pet/calendar", {
           data: {
             id: modalContent.id,
           },
         });
         if (response.status === 200) {
           console.log("Event Deleted Successfully");
+          onFormSubmit("Delete Event Successfully", "edit");
         }
       } catch (error) {
         console.error("Error deleting event", error);
+        onFormSubmit("Event Not Found", "edit");
       }
     } else {
       console.log("Delete action cancelled");
+      onFormSubmit("Failed to Delete Event", "edit");
     }
+    onClose();
   };
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -68,27 +76,7 @@ const EventModal: React.FC<PropsType> = ({ onClose, onEdit, modalContent }) => {
 
           <p className="mt-8">{modalContent.description}</p>
         </div>
-        {/* <form className="flex flex-col justify-center p-5">
-          <div className="pt-2">
-            <label className="block text-xl">Title</label>
-            <select required className="border border-slate-400">
-              <option value="" className="text-slate-300">
-                Select a Event
-              </option>
-              <option value="walking">Walking</option>
-              <option value="veterinary">Veterinary</option>
-              <option value="grooming">Grooming</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div className="pt-2 text-xl">
-            <label className="block">Time</label>
-          </div>
-          <div className="pt-2 ">
-            <label className="block text-xl">Detail</label>
-            <textarea cols={80} rows={4} className="border border-slate-400" />
-          </div>
-        </form> */}
+
         <div className="px-3 inline-block">
           <button
             onClick={onEdit}

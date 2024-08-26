@@ -145,7 +145,7 @@ export default function Register() {
         formData.append("image", new Blob([binaryImage], { type: imageType }));
       }
 
-      const response = await axios.post("/api/pet/register-pet", formData);
+      const response = await axios.post("/api/pet", formData);
 
       if (response.status === 200) {
         router.push("/auth/mypets");

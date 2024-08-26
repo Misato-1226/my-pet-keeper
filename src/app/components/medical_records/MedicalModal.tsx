@@ -15,7 +15,7 @@ const MedicalModal = (props: PropsType) => {
   const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this medical record?")) {
       try {
-        const response = await axios.delete(`/api/pet/delete-medical-record`, {
+        const response = await axios.delete(`/api/pet/medical_record`, {
           data: {
             id: record.id,
           },

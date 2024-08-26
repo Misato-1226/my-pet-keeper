@@ -8,16 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import PetType from "@/types/PetType";
 import { useEffect, useContext, useState } from "react";
-import { PetsContext } from "@/app/contexts/Pets";
 import { useParams } from "next/navigation";
-import { log } from "console";
 
 const FormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   petType: z.enum(["DOG", "CAT"], {
     errorMap: () => ({ message: "Pet type is required" }),
   }),
-  breed: z.string().optional(),
+  breed: z.union([z.string(), z.array(z.string())]).optional(),
   gender: z.enum(["MALE", "FEMALE", "UNKNOWN"], {
     errorMap: () => ({ message: "Gender is required" }),
   }),
@@ -34,7 +32,8 @@ interface Breed {
 
 export default function Register() {
   const router = useRouter();
-  const [image, setImage] = useState<string | null>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [pet, setPet] = useState<PetType>();
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [petType, setPetType] = useState<"DOG" | "CAT" | "">("");
 
@@ -48,9 +47,6 @@ export default function Register() {
   } = useForm<FormSchemaType>({
     resolver: zodResolver(FormSchema),
   });
-
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [pet, setPet] = useState<PetType>();
 
   useEffect(() => {
     if (petType === "CAT") {
@@ -103,7 +99,7 @@ export default function Register() {
   useEffect(() => {
     const getPet = async () => {
       try {
-        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        const response = await axios.get(`/api/pet/${id}`);
         if (response.status === 200) {
           setPet(response.data);
           setPetType(response.data.petType.toUpperCase() as "DOG" | "CAT");
@@ -117,11 +113,13 @@ export default function Register() {
 
     const getPetImage = async () => {
       try {
-        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        const response = await axios.get(`/api/pet/${id}`);
         if (response.data.image && response.data.image.data) {
           const base64Flag = `data:image/jpeg;base64,${bufferToBase64(
             response.data.image.data
           )}`;
+          console.log("元のイメージデータの中身:", base64Flag);
+
           setImageSrc(base64Flag);
         }
       } catch (error) {
@@ -164,7 +162,7 @@ export default function Register() {
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
           setImageSrc(reader.result);
-          setImage(reader.result);
+          console.log("新しいイメージデータ:", reader.result);
         }
       };
       reader.readAsDataURL(file);
@@ -181,14 +179,14 @@ export default function Register() {
         : values.breed
         ? [values.breed]
         : [];
-      breedArray.forEach((breed) => {
-        formData.append("breed[]", breed);
-      });
+      const breedToString = breedArray.join(", ");
+
+      formData.append("breed", breedToString);
       formData.append("gender", values.gender);
       formData.append("birthday", values.birthday || "");
 
-      if (image) {
-        const base64String = image.split(",")[1];
+      if (imageSrc) {
+        const base64String = imageSrc.split(",")[1];
         const binaryString = atob(base64String);
         const binaryData = new Uint8Array(binaryString.length);
         for (let i = 0; i < binaryString.length; i++) {
@@ -213,7 +211,7 @@ export default function Register() {
     if (confirm("Are you sure you want to delete this pet profile?")) {
       try {
         const petId = parseInt(id, 10);
-        const response = await axios.delete(`/api/pet/delete-pet`, {
+        const response = await axios.delete(`/api/pet`, {
           data: {
             petId: petId,
           },

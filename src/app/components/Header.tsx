@@ -17,7 +17,7 @@ const Header = () => {
   useEffect(() => {
     const getUserMail = async () => {
       try {
-        const response = await axios.get("/api/get-user-mail");
+        const response = await axios.get("/api/user");
         if (response.status === 200) {
           console.log(response.data);
           const { email } = response.data;

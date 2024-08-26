@@ -26,7 +26,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 const FormModal: React.FC<ModalProps> = ({ onClose, onFormSubmit }) => {
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await axios.post("/api/pet/register-event", {
+      const response = await axios.post("/api/pet/calendar", {
         event: values.event,
         date: values.date,
         description: values.description,
@@ -110,7 +110,7 @@ const FormModal: React.FC<ModalProps> = ({ onClose, onFormSubmit }) => {
             <label className="block text-xl">Description</label>
             <textarea
               {...register("description")}
-              cols={80}
+              cols={60}
               rows={4}
               className="border border-slate-400"
             />

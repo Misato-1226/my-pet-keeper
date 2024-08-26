@@ -23,7 +23,7 @@ export default function Calendar() {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const response = await axios.get("/api/pet/get-all-events");
+        const response = await axios.get("/api/pet/calendar");
         if (response.status === 200) {
           console.log("Get All Events Successfully", response);
           const events = response.data;
@@ -154,6 +154,7 @@ export default function Calendar() {
           onClose={handleEventModalClose}
           modalContent={modalContent}
           onEdit={handleEditModal}
+          onFormSubmit={handleFormSubmit}
         />
       )}
       {isEdit && modalContent && (

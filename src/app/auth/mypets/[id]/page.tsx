@@ -18,7 +18,7 @@ export default function PetDetail() {
   useEffect(() => {
     const getPet = async () => {
       try {
-        const response = await axios.get(`/api/pet/get-pet/${id}`);
+        const response = await axios.get(`/api/pet/${id}`);
         if (response.status === 200) {
           console.log(response.data);
           setPet(response.data);

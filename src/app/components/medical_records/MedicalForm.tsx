@@ -38,7 +38,7 @@ const MedicalForm = ({
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await axios.post("/api/pet/register-medical-record", {
+      const response = await axios.post("/api/pet/medical_record", {
         title: values.title,
         veterinaryClinic: values.veterinaryClinic,
         veterinarian: values.veterinarian,

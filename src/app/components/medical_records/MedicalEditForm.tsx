@@ -42,7 +42,7 @@ const MedicalEditForm = (props: PropsType) => {
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      const response = await axios.put("/api/pet/update-medical-record", {
+      const response = await axios.put("/api/pet/medical_record", {
         id: record.id,
         title: values.title,
         notes: values.notes,

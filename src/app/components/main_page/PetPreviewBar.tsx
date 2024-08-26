@@ -15,7 +15,7 @@ const PetPreviewBar = () => {
   useEffect(() => {
     const getPets = async () => {
       try {
-        const response = await axios.get("/api/pet/get-all-pets");
+        const response = await axios.get("/api/pet");
         if (response.status === 200) {
           console.log("Get Pets Successfully", response.data);
           setPets(response.data);
@@ -24,12 +24,16 @@ const PetPreviewBar = () => {
           setError(true);
         }
       } catch (error) {
-        console.log("Failed to fetching pets");
+        console.log("Failed to fetch pets");
+        setError(true);
       } finally {
         setLoading(false);
       }
     };
     getPets();
+  }, []);
+
+  useEffect(() => {
     const newImageSrcs: { [key: string]: string } = {};
 
     pets.forEach((pet) => {
@@ -41,11 +45,8 @@ const PetPreviewBar = () => {
         reader.onloadend = () => {
           newImageSrcs[pet.name] = reader.result as string;
           setImageSrcs((prevSrcs) => ({ ...prevSrcs, ...newImageSrcs }));
-          setLoading(false);
         };
         reader.readAsDataURL(imageBlob);
-      } else {
-        setLoading(false);
       }
     });
   }, [pets]);

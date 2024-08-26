@@ -14,7 +14,7 @@ export default function Mypets() {
   useEffect(() => {
     const getPets = async () => {
       try {
-        const response = await axios.get("/api/pet/get-all-pets");
+        const response = await axios.get("/api/pet");
         if (response.status === 200) {
           console.log("Get Pets Successfully", response.data);
           setPets(response.data);

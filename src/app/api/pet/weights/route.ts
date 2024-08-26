@@ -1,6 +1,5 @@
-import { authOptions } from "@/utils/auth";
 import prisma from "@/utils/db";
-import { getServerSession } from "next-auth/next";
+import { handleSession } from "@/utils/session";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -12,12 +11,10 @@ const weightSchema = z.object({
 
 export const POST = async (req: Request) => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || !session.user) {
+    const { authorized, userId } = await handleSession();
+    if (!authorized || userId === null) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    const userId = Number(session.user.id);
     const body = await req.json();
     const { date, notes, weight } = weightSchema.parse(body);
 
@@ -28,7 +25,7 @@ export const POST = async (req: Request) => {
         userId,
         date,
         notes,
-        weight: parseInt(weight ?? "0", 10),
+        weight: parseFloat(weight ?? "0"),
         petId: parseInt(petId, 10),
       },
     });
@@ -41,6 +38,26 @@ export const POST = async (req: Request) => {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to add weight" },
+      { status: 500 }
+    );
+  }
+};
+
+export const DELETE = async (req: Request) => {
+  try {
+    const { id } = await req.json();
+    const deletedWeight = await prisma.weight.delete({
+      where: {
+        id: id,
+      },
+    });
+    return NextResponse.json(
+      { message: "Weight deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete weight" },
       { status: 500 }
     );
   }
