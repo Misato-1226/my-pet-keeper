@@ -35,26 +35,19 @@ const PetPreviewBar = () => {
 
   useEffect(() => {
     const newImageSrcs: { [key: string]: string } = {};
-    const promises = pets.map((pet) => {
-      return new Promise((resolve) => {
-        if (pet.image && pet.image.data) {
-          const imageBlob = new Blob([new Uint8Array(pet.image.data)], {
-            type: "image/*",
-          });
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            newImageSrcs[pet.name] = reader.result as string;
-            resolve(true); // 読み込み完了を通知
-          };
-          reader.readAsDataURL(imageBlob);
-        } else {
-          resolve(false); // 画像がない場合も完了を通知
-        }
-      });
-    });
 
-    Promise.all(promises).then(() => {
-      setImageSrcs((prevSrcs) => ({ ...prevSrcs, ...newImageSrcs }));
+    pets.forEach((pet) => {
+      if (pet.image && pet.image.data) {
+        const imageBlob = new Blob([new Uint8Array(pet.image.data)], {
+          type: "image/*",
+        });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          newImageSrcs[pet.name] = reader.result as string;
+          setImageSrcs((prevSrcs) => ({ ...prevSrcs, ...newImageSrcs }));
+        };
+        reader.readAsDataURL(imageBlob);
+      }
     });
   }, [pets]);
 
