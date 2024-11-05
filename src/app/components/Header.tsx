@@ -109,13 +109,13 @@ const Header = () => {
         >
           <ul className="text-xl mt-36 ml-14 flex flex-col gap-y-8">
             <li>
-              <Link href="/home">Home</Link>
+              <Link href="/auth/main">Home</Link>
             </li>
             <li>
-              <Link href="/mypets">My Pets</Link>
+              <Link href="/auth/mypets">My Pets</Link>
             </li>
             <li>
-              <Link href="/calender">Calender</Link>
+              <Link href="/auth/calender">Calender</Link>
             </li>
           </ul>
         </nav>
